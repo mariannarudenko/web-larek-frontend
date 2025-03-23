@@ -1,56 +1,22 @@
 import './scss/styles.scss';
-import { EventEmitter } from "../components/base/events";
+import { EventEmitter } from "./components/base/events";
+import { CatalogView } from "./view/CatalogView";
+import { CatalogPresenter } from "./presenter/CatalogPresenter";
+import { CatalogApi } from "./model/CatalogApi";
+import { ProductModalView } from "./view/ProductModalView";
 
-export interface IProduct {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  imageUrl: string;
-}
+// 1. События
+const eventBus = new EventEmitter();
 
-export class Product implements IProduct {
-  constructor(
-    public readonly id: number,
-    public readonly title: string,
-    public readonly description: string,
-    public readonly price: number,
-    public readonly category: string,
-    public readonly imageUrl: string
-  ) {}
-}
+// 2. Контейнер для карточек
+const catalogContainer = document.querySelector(".gallery") as HTMLElement;
 
-export class ProductValidation {
-  static validate(product: Product): boolean {
-    if (product.price <= 0) {
-      return false;
-    }
-    if (!product.title.trim()) {
-      return false;
-    }
-    return true;
-  }
-}
+const modalView = new ProductModalView(eventBus);
 
-class Catalog {
-  private products: Product[];
+// 3. View + Model + Presenter
+const catalogView = new CatalogView(catalogContainer, eventBus);
+const catalogModel = new CatalogApi();
+const catalogPresenter = new CatalogPresenter(catalogView, catalogModel, eventBus);
 
-  constructor() {
-    this.products = []; 
-  }
-
-  addProduct(product: Product) {
-      this.products.push(product);
-  }
-
-
-  getProducts() {
-    return this.products;
-  }
-}
-
-class Cart {
-  private products: Product[];
-  
-}
+// 4. Запуск
+catalogPresenter.init();

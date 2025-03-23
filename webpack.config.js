@@ -24,7 +24,7 @@ const config = {
     open: true,
     host: "localhost",
     watchFiles: ["src/pages/*.html"],
-    hot: true
+    hot: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
