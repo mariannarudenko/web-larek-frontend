@@ -1,5 +1,6 @@
 import { IFullProduct } from "../model/Product";
 import { IEvents } from "../components/base/events";
+import { CDN_URL } from '../utils/constants';
 
 export class ProductModalView {
   private modalElement: HTMLElement;
@@ -46,7 +47,7 @@ export class ProductModalView {
     if (title) title.textContent = product.title;
     if (description) description.textContent = product.description;
     if (image instanceof HTMLImageElement) {
-      image.src = product.image;
+      image.src = `${CDN_URL}/${product.image}`;
       image.alt = product.title;
     }
     if (price) {

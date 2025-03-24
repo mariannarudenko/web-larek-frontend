@@ -1,5 +1,7 @@
 import { ICatalogProduct } from "../model/Product";
 import { IEvents } from "../components/base/events";
+import { CDN_URL } from '../utils/constants';
+
 
 export class CatalogView {
   private container: HTMLElement;
@@ -30,7 +32,7 @@ export class CatalogView {
       if (category) category.textContent = product.category;
       if (title) title.textContent = product.title;
       if (image instanceof HTMLImageElement) {
-        image.src = product.image;
+        image.src = `${CDN_URL}/${product.image}`;
         image.alt = product.title;
       }
       if (price) {
