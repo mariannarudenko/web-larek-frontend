@@ -1,48 +1,47 @@
-import { ICatalogProduct } from "../model/Product";
+import { ICatalogProduct } from "../model/product";
 import { IEvents } from "../components/base/events";
-import { CDN_URL } from '../utils/constants';
+import { CDN_URL } from "../utils/constants";
+import { BaseView } from "../utils/utils";
 
-
-export class CatalogView {
-  private container: HTMLElement;
-  private events: IEvents;
-  private template: HTMLTemplateElement;
-
-  constructor(container: HTMLElement, events: IEvents) {
-    this.container = container;
-    this.events = events;
-
-    const tmpl = document.querySelector<HTMLTemplateElement>("#card-catalog");
-    if (!tmpl) throw new Error("Template #card-catalog not found");
-    this.template = tmpl;
+/**
+ * Представление каталога товаров.
+ * Отвечает за отрисовку карточек продуктов и обработку кликов.
+ */
+export class CatalogView extends BaseView {
+  /**
+   * Создаёт экземпляр представления каталога.
+   * @param {HTMLElement} container - Контейнер, в который будут отрисованы карточки.
+   * @param {IEvents} events - Система событий для связи с другими компонентами.
+   * @throws Ошибка, если шаблон #card-catalog не найден в DOM.
+   */
+  constructor(
+    private container: HTMLElement,
+    private events: IEvents
+  ) {
+    const template = document.querySelector<HTMLTemplateElement>("#card-catalog");
+    if (!template) throw new Error("Шаблон #card-catalog не найден");
+    super(template, CDN_URL);
   }
 
-  render(products: ICatalogProduct[]) {
+  /**
+   * Отрисовывает список продуктов в контейнере.
+   * @param {ICatalogProduct[]} products - Список продуктов для отображения.
+   */
+  public render(products: ICatalogProduct[]) {
     this.container.innerHTML = "";
 
-    products.forEach(product => {
-      const card = this.template.content.cloneNode(true) as HTMLElement;
+    products.forEach((product) => {
+      const card = this.cloneTemplate();
 
-      const category = card.querySelector(".card__category");
-      const title = card.querySelector(".card__title");
-      const image = card.querySelector(".card__image");
-      const price = card.querySelector(".card__price");
-      const button = card.querySelector(".card");
+      this.qs(card, ".card__category")!.textContent = product.category;
+      this.qs(card, ".card__title")!.textContent = product.title;
+      this.setImage(this.qs(card, ".card__image"), product.image, product.title);
+      this.qs(card, ".card__price")!.textContent = this.formatPrice(product.price);
 
-      if (category) category.textContent = product.category;
-      if (title) title.textContent = product.title;
-      if (image instanceof HTMLImageElement) {
-        image.src = `${CDN_URL}/${product.image}`;
-        image.alt = product.title;
-      }
-      if (price) {
-        price.textContent = product.price !== null
-          ? `${product.price} синапсов`
-          : "Бесценно";
-      }
-      if (button) {
-        button.setAttribute("data-id", product.id);
-        button.addEventListener("click", () => {
+      const clickable = this.qs(card, ".card");
+      if (clickable) {
+        clickable.setAttribute("data-id", product.id);
+        clickable.addEventListener("click", () => {
           this.events.emit("product:select", { id: product.id });
         });
       }
@@ -51,4 +50,3 @@ export class CatalogView {
     });
   }
 }
-

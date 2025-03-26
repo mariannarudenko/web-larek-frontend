@@ -1,45 +1,37 @@
-import { CatalogView } from "../view/CatalogView";
-import { Product } from "../model/Product";
+import { CatalogView } from "../view/catalogView";
 import { IEvents } from "../components/base/events";
+import { IProductCatalog, IFilterableCatalog } from "../model/catalog";
 
-
-// Интерфейс каталога
-export interface IProductCatalog {
-  setProducts(products: Product[]): void;
-}
-
-// Интерфейс фильтруемого каталога
-export interface IFilterableCatalog {
-  getProductById(id: string): Product | undefined;
-}
-
-// Класс каталога
-export class Catalog implements IProductCatalog, IFilterableCatalog {
-  private products: Product[] = [];
-
-  setProducts(products: Product[]): void {
-    this.products = products;
-  }
-
-  getProductById(id: string): Product | undefined {
-    return this.products.find((product) => product.id === id);
-  }
-}
-
+/**
+ * Презентер для каталога продуктов.
+ * Связывает представление с моделью и обрабатывает пользовательские события.
+ */
 export class CatalogPresenter {
+  /**
+   * Создаёт экземпляр презентера каталога.
+   * @param {CatalogView} view - Представление каталога.
+   * @param {IProductCatalog & IFilterableCatalog} model - Модель, содержащая данные о продуктах.
+   * @param {IEvents} events - Система событий для связи между компонентами.
+   */
   constructor(
     private view: CatalogView,
-    private model: { getProducts(): Promise<Product[]>; getProductById(id: string): Product },
+    private model: IProductCatalog & IFilterableCatalog,
     private events: IEvents
   ) {}
 
+  /**
+   * Инициализирует презентер: загружает продукты, отображает их
+   * и настраивает обработчики событий выбора товара.
+   */
   async init() {
     const products = await this.model.getProducts();
     this.view.render(products);
 
     this.events.on<{ id: string }>("product:select", ({ id }) => {
       const product = this.model.getProductById(id);
-      this.events.emit("modal:open", { product });
+      if (product) {
+        this.events.emit("modal:open", { product });
+      }
     });
   }
 }

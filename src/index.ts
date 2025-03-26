@@ -1,22 +1,33 @@
 import './scss/styles.scss';
 import { EventEmitter } from "./components/base/events";
-import { CatalogView } from "./view/CatalogView";
-import { CatalogPresenter } from "./presenter/CatalogPresenter";
-import { CatalogApi } from "./model/CatalogApi";
-import { ProductModalView } from "./view/ProductModalView";
+import { CatalogView } from "./view/catalogView";
+import { CatalogPresenter } from "./presenter/catalogPresenter";
+import { CatalogApi } from "./components/base/catalogApi";
+import { ProductModalView } from "./view/productModalView";
 
-// 1. События
+/**
+ * Инициализация событийной шины для обмена сообщениями между компонентами.
+ */
 const eventBus = new EventEmitter();
 
-// 2. Контейнер для карточек
+/**
+ * Получение контейнера для карточек товаров.
+ */
 const catalogContainer = document.querySelector(".gallery") as HTMLElement;
 
+/**
+ * Инициализация модального окна для отображения информации о продукте.
+ */
 const modalView = new ProductModalView(eventBus);
 
-// 3. View + Model + Presenter
+/**
+ * Инициализация MVP-архитектуры: представление, модель, презентер.
+ */
 const catalogView = new CatalogView(catalogContainer, eventBus);
 const catalogModel = new CatalogApi();
 const catalogPresenter = new CatalogPresenter(catalogView, catalogModel, eventBus);
 
-// 4. Запуск
+/**
+ * Запуск приложения: загрузка каталога и отображение продуктов.
+ */
 catalogPresenter.init();
