@@ -73,6 +73,9 @@ const config = {
     ],
   },
   resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
     extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
   },
   optimization: {

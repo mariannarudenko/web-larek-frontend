@@ -1,4 +1,4 @@
-import { IBaseProduct } from "../model/product";
+import { IBaseProduct } from "@/types";
 
 /**
  * Класс для валидации продуктов.

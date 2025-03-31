@@ -134,46 +134,47 @@ export function createElement<
     return element;
 }
 
-/**
- * Базовый класс для всех представлений.
- * Предоставляет утилиты для безопасной работы с DOM и шаблонами.
- * Помогает избежать дублирования и централизует базовую логику.
- */
 export class BaseView {
-    constructor(protected template: HTMLTemplateElement,
-    protected cdnUrl: string
-    ) {
-      if (!template) throw new Error("Template не найден");
+    constructor(protected template: HTMLTemplateElement, protected cdnUrl: string) {
+        if (!template) throw new Error("Template не найден");
     }
-  
-    /**
-     * Клонирует шаблон в виде DOM-элемента.
-     */
+
     protected cloneTemplate(): HTMLElement {
-      return this.template.content.cloneNode(true) as HTMLElement;
+        return this.template.content.cloneNode(true) as HTMLElement;
     }
-  
-    /**
-     * Безопасный querySelector.
-     */
+
     protected qs<T extends HTMLElement>(root: ParentNode, selector: string): T | null {
-      return root.querySelector(selector);
+        return root.querySelector(selector);
     }
-  
-    /**
-     * Устанавливает изображение из CDN.
-     */
+
     protected setImage(img: Element | null, src: string, alt: string) {
-      if (img instanceof HTMLImageElement) {
-        img.src = `${this.cdnUrl}/${src}`;
-        img.alt = alt;
-      }
+        if (img instanceof HTMLImageElement) {
+            img.src = `${this.cdnUrl}/${src}`;
+            img.alt = alt;
+        }
     }
-  
-    /**
-     * Форматирует цену в строку.
-     */
+
     protected formatPrice(price: number | null): string {
-      return price !== null ? `${price} синапсов` : "Бесценно";
+        return price !== null ? `${price} синапсов` : "Бесценно";
     }
-  }
+
+    // Новый метод: управление видимостью элемента
+    protected show(element: HTMLElement) {
+        element.classList.add("modal_active");
+    }
+    
+    protected hide(element: HTMLElement) {
+        element.classList.remove("modal_active");
+    }
+
+    // Универсальный метод подписки на события
+    protected bindEvents<T extends HTMLElement>(
+        element: T,
+        events: Record<string, EventListener>
+    ) {
+        Object.entries(events).forEach(([event, handler]) => {
+            element.addEventListener(event, handler);
+        });
+    }
+}
+
