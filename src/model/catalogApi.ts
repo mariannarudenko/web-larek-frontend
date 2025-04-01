@@ -1,7 +1,7 @@
-import { Api } from './api';
+import { Api } from '../components/base/api';
 import { Product } from '@/model/productModel';
 import { Catalog } from '@/model/catalogModel';
-import { ApiListResponse } from './api';
+import { ApiListResponse } from '../components/base/api';
 import { IProductCatalog, IFilterableCatalog } from '@/types';
 import { ProductValidation } from '@/presenter/productValidation';
 import { Logger } from '@/utils/logger';
@@ -30,7 +30,14 @@ export class CatalogApi implements IProductCatalog, IFilterableCatalog {
 			)) as ApiListResponse<Product>;
 			const rawProducts = response.items.map(
 				(p) =>
-					new Product(p.id, p.title, p.description, p.price, p.category, p.image)
+					new Product(
+						p.id,
+						p.title,
+						p.description,
+						p.price,
+						p.category,
+						p.image
+					)
 			);
 
 			const validProducts = rawProducts.filter(ProductValidation.validate);

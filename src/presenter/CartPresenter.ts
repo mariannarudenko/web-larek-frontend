@@ -37,18 +37,20 @@ export class CartPresenter {
 		});
 
 		this.events.on('cart:open', () => {
-      console.log('[CartPresenter] cart:open получен');
-			this.mount();
+			console.log('[CartPresenter] cart:open получен');
+			if (!this.isMounted) {
+				this.mountListeners(); // теперь навешиваем слушатели один раз
+				this.isMounted = true;
+			}
+			this.render();
+			this.modalView.showModal();
 		});
 	}
 
 	/**
-	 * Инициализирует обработчики событий (навешивается один раз).
+	 * Навешивает обработчики UI для удаления и оформления заказа.
 	 */
-	public mount() {
-		if (this.isMounted) return;
-		this.isMounted = true;
-
+	private mountListeners() {
 		this.listView.onRemove((id) => {
 			this.model.removeItem(id);
 			Logger.info('Товар удалён через UI', { productId: id });
@@ -56,14 +58,12 @@ export class CartPresenter {
 		});
 
 		this.listView.onCheckout(() => {
-			this.events.emit('order:success');
-			this.model.clear();
-			this.render();
+			this.events.emit('order:open', {
+				items: this.model.getItems(),
+				total: this.model.getTotalPrice(),
+			});
 			this.modalView.hideModal();
 		});
-
-		this.render();
-    this.modalView.showModal();
 	}
 
 	/**

@@ -3,14 +3,14 @@
  * Содержит общие свойства всех товаров.
  */
 export interface IBaseProduct {
-  /** Уникальный идентификатор продукта */
-  id: string;
+	/** Уникальный идентификатор продукта */
+	id: string;
 
-  /** Название продукта */
-  title: string;
+	/** Название продукта */
+	title: string;
 
-  /** Цена продукта. Может быть null, если цена не указана (бесценно) */
-  price: number | null;
+	/** Цена продукта. Может быть null, если цена не указана (бесценно) */
+	price: number | null;
 }
 
 /**
@@ -18,11 +18,11 @@ export interface IBaseProduct {
  * Расширяет базовый продукт, добавляя категорию и изображение.
  */
 export interface ICatalogProduct extends IBaseProduct {
-  /** Категория, к которой относится продукт */
-  category: string;
+	/** Категория, к которой относится продукт */
+	category: string;
 
-  /** URL изображения продукта */
-  image: string;
+	/** URL изображения продукта */
+	image: string;
 }
 
 /**
@@ -30,6 +30,6 @@ export interface ICatalogProduct extends IBaseProduct {
  * Расширяет продукт из каталога, добавляя описание.
  */
 export interface IFullProduct extends ICatalogProduct {
-  /** Подробное описание продукта */
-  description: string;
+	/** Подробное описание продукта */
+	description: string;
 }
