@@ -126,33 +126,21 @@ export class OrderPresenter {
 	 */
 	private onSuccessClose() {
 		Logger.info('Оформление заказа завершено. Сброс данных.');
-
-		// Скрываем все открытые модальные окна
+	
 		this.modal.hideModal();
-
+	
+		// Получаем товары из корзины и сбрасываем у них флаг hasCart
+		this.cart.getItems().forEach((item) => {
+			item.product.hasCart = false;
+			Logger.info('Сброшен флаг hasCart для товара', { id: item.product.id });
+		});
+	
 		// Сброс состояния модели и корзины
 		this.model.reset();
 		this.cart.clear();
-
-		// Сброс состояния всех кнопок на "В корзину"
-		this.resetAllProductButtons();
-
-		// Эмитируем события об изменении корзины и открытии каталога
+	
+		// Эмитируем события для обновления UI
 		this.events.emit('cart:changed', []);
 		this.events.emit('catalog:open');
-	}
-
-	/**
-	 * Сбрасывает состояние всех кнопок товаров на "В корзину".
-	 */
-	private resetAllProductButtons(): void {
-		const productCards = document.querySelectorAll('.card');
-		productCards.forEach((card) => {
-			const button = card.querySelector('.card__button') as HTMLButtonElement;
-			button.textContent = 'В корзину'; // сбрасываем текст на "В корзину"
-			button.disabled = false; // делаем кнопку доступной
-		});
-
-		Logger.info('Состояние кнопок для всех товаров сброшено на "В корзину".');
 	}
 }
