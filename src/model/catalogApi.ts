@@ -1,34 +1,27 @@
-import { Api } from '../components/base/api';
+import { Api, ApiListResponse } from '@/components/base/api';
+import { API_ENDPOINTS } from '@/utils/constants';
 import { Product } from '@/model/productModel';
 import { Catalog } from '@/model/catalogModel';
-import { ApiListResponse } from '../components/base/api';
 import { IProductCatalog, IFilterableCatalog } from '@/types';
 import { ProductValidation } from '@/presenter/productValidation';
 import { Logger } from '@/utils/logger';
 
 /**
  * Класс, реализующий интерфейсы каталога и фильтрации товаров.
- * Отвечает за загрузку данных с API и хранение валидных продуктов в локальном каталоге.
+ * Загружает данные с API, валидирует и сохраняет продукты в локальном каталоге.
  */
 export class CatalogApi implements IProductCatalog, IFilterableCatalog {
-	/** Локальный каталог продуктов */
 	private catalog = new Catalog();
-
-	/** Клиент для запросов к API */
-	private api = new Api(
-		process.env.API_ORIGIN || 'https://larek-api.nomoreparties.co'
-	);
+	private api = new Api(process.env.API_ORIGIN);
 
 	/**
-	 * Загружает список продуктов с сервера, валидирует и сохраняет их.
-	 * @returns {Promise<Product[]>} Промис с массивом валидных продуктов.
+	 * Загружает список продуктов с сервера, валидирует их и сохраняет.
+	 * @returns Промис с массивом валидных продуктов.
 	 */
 	async getProducts(): Promise<Product[]> {
 		try {
-			const response = (await this.api.get(
-				'/api/weblarek/product/'
-			)) as ApiListResponse<Product>;
-			const rawProducts = response.items.map(
+			const response = await this.api.get(API_ENDPOINTS.PRODUCTS);
+			const rawProducts = (response as ApiListResponse<Product>).items.map(
 				(p) =>
 					new Product(
 						p.id,
@@ -52,13 +45,15 @@ export class CatalogApi implements IProductCatalog, IFilterableCatalog {
 	}
 
 	/**
-	 * Возвращает продукт по ID из локального каталога.
-	 * @param {string} id - Идентификатор продукта.
-	 * @returns {Product | undefined} Найденный продукт или undefined.
+	 * Возвращает продукт по его ID из локального каталога.
+	 * @param id Идентификатор продукта.
+	 * @returns Найденный продукт или undefined.
 	 */
 	getProductById(id: string): Product | undefined {
 		const product = this.catalog.getProductById(id);
-		if (!product) {
+		if (product) {
+			Logger.info('Продукт получен по ID', product);
+		} else {
 			Logger.warn('Продукт не найден', { id });
 		}
 		return product;

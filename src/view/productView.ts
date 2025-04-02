@@ -6,13 +6,13 @@ import { Logger } from '@/utils/logger';
 
 /**
  * Представление карточки товара.
- * Отвечает за рендер и взаимодействие с пользователем.
+ * Отвечает за рендеринг и взаимодействие с пользователем.
  */
 export class ProductView extends BaseView {
 	private events: IEvents;
 
 	/**
-	 * @param {IEvents} events - Интерфейс событийного взаимодействия.
+	 * @param events Система событий для взаимодействия.
 	 * @throws {Error} Если шаблон #card-preview не найден в DOM.
 	 */
 	constructor(events: IEvents) {
@@ -25,9 +25,9 @@ export class ProductView extends BaseView {
 	}
 
 	/**
-	 * Отрисовывает карточку товара на основе переданных данных.
-	 * @param {IFullProduct & { hasCart: boolean }} product - Полные данные товара с флагом наличия в корзине.
-	 * @returns {HTMLElement} HTML-элемент карточки товара.
+	 * Отображает карточку товара с данными.
+	 * @param product Данные товара с флагом нахождения в корзине.
+	 * @returns HTML-элемент карточки товара.
 	 */
 	public render(product: IFullProduct & { hasCart: boolean }): HTMLElement {
 		const card = this.cloneTemplate();
@@ -71,11 +71,12 @@ export class ProductView extends BaseView {
 	}
 
 	/**
-	 * Обновляет текст кнопки в зависимости от состояния товара в корзине.
-	 * @param {HTMLButtonElement} button - Кнопка для обновления.
-	 * @param {boolean} hasCart - Признак, находится ли товар в корзине.
+	 * Обновляет состояние кнопки в зависимости от того, находится ли товар в корзине.
+	 * @param button Кнопка для обновления текста.
+	 * @param hasCart Признак нахождения товара в корзине.
 	 */
-	private updateButton(button: HTMLButtonElement, hasCart: boolean) {
+	private updateButton(button: HTMLButtonElement, hasCart: boolean): void {
 		button.textContent = hasCart ? 'Убрать' : 'В корзину';
+		Logger.info('Состояние кнопки обновлено', { text: button.textContent });
 	}
 }

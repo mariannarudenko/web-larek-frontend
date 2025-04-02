@@ -1,32 +1,31 @@
 import { ModalView } from './modalView';
-import { IFullProduct } from '@/types';
 import { ProductView } from './productView';
 import { IEvents } from '@/components/base/events';
-import { Logger } from '@/utils/logger';
 import { ensureElement } from '@/utils/utils';
+import { Logger } from '@/utils/logger';
+import { IFullProduct } from '@/types';
 
 /**
  * Представление модального окна для отображения карточки товара.
- * Использует ProductView для отрисовки содержимого и наследует ModalView.
  */
 export class ProductModalView extends ModalView {
 	private productView: ProductView;
 
 	/**
-	 * @param events Интерфейс событий для взаимодействия с карточкой товара.
-	 * @param cdnUrl URL для загрузки изображений и ресурсов.
+	 * @param events Система событий.
+	 * @param cdnUrl Базовый URL для загрузки ресурсов.
 	 */
 	constructor(events: IEvents, cdnUrl: string) {
-		super('modal-container', 'card-preview', cdnUrl);
+		super('card-preview', cdnUrl);
 		this.productView = new ProductView(events);
 	}
 
 	/**
-	 * Рендерит карточку продукта в модальном окне.
-	 *
-	 * @param product Полные данные продукта, включая признак наличия в корзине.
+	 * Обновляет содержимое модального окна продуктовой карточкой.
+	 * Не вызывает открытие — это должно происходить вручную.
+	 * @param product Продукт с дополнительным свойством hasCart.
 	 */
-	public render(product: IFullProduct & { hasCart: boolean }) {
+	public update(product: IFullProduct & { hasCart: boolean }): void {
 		const contentElement = ensureElement<HTMLElement>(
 			this.modalContainer.querySelector('.modal__content') as HTMLElement
 		);
@@ -34,18 +33,33 @@ export class ProductModalView extends ModalView {
 		const card = this.productView.render(product);
 		contentElement.innerHTML = '';
 		contentElement.appendChild(card);
-		this.showModal();
+
+		Logger.info('Модальное окно обновлено карточкой товара', {
+			id: product.id,
+		});
+	}
+
+	/**
+	 * Проверяет, открыто ли модальное окно.
+	 * @returns true, если модальное окно активно.
+	 */
+	public isVisible(): boolean {
+		return this.modalContainer.classList.contains('modal_active');
 	}
 
 	/**
 	 * Закрывает модальное окно и очищает его содержимое.
 	 */
-	public close() {
-		Logger.info('Закрытие модального окна');
+	public close(): void {
+		Logger.info('Закрытие модального окна товара');
 		this.hideModal();
+
 		const contentElement = this.modalContainer.querySelector(
 			'.modal__content'
 		) as HTMLElement | null;
-		if (contentElement) contentElement.innerHTML = '';
+
+		if (contentElement) {
+			contentElement.innerHTML = '';
+		}
 	}
 }

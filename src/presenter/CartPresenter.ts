@@ -3,13 +3,14 @@ import { CartListView } from '@/view/cartListView';
 import { CartModalView } from '@/view/cartModalView';
 import { EventEmitter } from '@/components/base/events';
 import { Logger } from '@/utils/logger';
+
 import type { IBaseProduct } from '@/types';
 
 /**
- * Презентер корзины, связывающий модель, представление списка и модальное окно.
+ * Презентер корзины. Связывает модель, представления и глобальные события.
  */
 export class CartPresenter {
-	private isMounted = false; // Флаг, чтобы события не дублировались
+	private isMounted = false;
 
 	constructor(
 		private model: Cart,
@@ -21,25 +22,22 @@ export class CartPresenter {
 	}
 
 	/**
-	 * Подписывается на глобальные события (добавление/удаление товаров, открытие корзины).
+	 * Подписывается на глобальные события (добавление, удаление, открытие корзины).
 	 */
 	private subscribeToEvents() {
 		this.events.on('cart:add', (data: { product: IBaseProduct }) => {
 			this.model.addItem(data.product);
-			this.render();
 			Logger.info('Товар добавлен в корзину', { product: data.product });
 		});
 
 		this.events.on('cart:remove', (data: { productId: string }) => {
 			this.model.removeItem(data.productId);
-			this.render();
 			Logger.info('Товар удалён из корзины', { productId: data.productId });
 		});
 
 		this.events.on('cart:open', () => {
-			console.log('[CartPresenter] cart:open получен');
 			if (!this.isMounted) {
-				this.mountListeners(); // теперь навешиваем слушатели один раз
+				this.mountListeners();
 				this.isMounted = true;
 			}
 			this.render();
@@ -48,7 +46,7 @@ export class CartPresenter {
 	}
 
 	/**
-	 * Навешивает обработчики UI для удаления и оформления заказа.
+	 * Навешивает обработчики событий на представление списка.
 	 */
 	private mountListeners() {
 		this.listView.onRemove((id) => {
@@ -62,12 +60,11 @@ export class CartPresenter {
 				items: this.model.getItems(),
 				total: this.model.getTotalPrice(),
 			});
-			this.modalView.hideModal();
 		});
 	}
 
 	/**
-	 * Рендерит корзину и обновляет данные.
+	 * Отображает актуальное состояние корзины.
 	 */
 	private render() {
 		const items = this.model.getItems();

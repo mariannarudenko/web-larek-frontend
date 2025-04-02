@@ -1,22 +1,27 @@
 import { IBaseProduct } from '@/types';
+import { Logger } from '@/utils/logger';
 
 /**
  * Класс для валидации продуктов.
- * Содержит методы проверки корректности данных товара.
  */
 export class ProductValidation {
 	/**
-	 * Проверяет, соответствует ли продукт требованиям:
+	 * Проверяет, валиден ли продукт:
 	 * - Заголовок не пустой.
-	 * - Цена либо `null` (бесценно), либо больше нуля.
-	 *
-	 * @param {IBaseProduct} product - Продукт для проверки.
-	 * @returns {boolean} `true`, если продукт валиден, иначе `false`.
+	 * - Цена либо null, либо больше нуля.
+	 * @param product Продукт для проверки.
+	 * @returns true, если продукт валиден.
 	 */
 	static validate(product: IBaseProduct): boolean {
 		const hasValidTitle = product.title.trim().length > 0;
 		const hasValidPrice = product.price === null || product.price > 0;
 
-		return hasValidTitle && hasValidPrice;
+		const isValid = hasValidTitle && hasValidPrice;
+
+		if (!isValid) {
+			Logger.warn('Невалидный продукт', product);
+		}
+
+		return isValid;
 	}
 }

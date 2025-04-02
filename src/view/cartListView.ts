@@ -3,29 +3,22 @@ import {
 	ensureElement,
 	cloneTemplate,
 	setElementData,
-	isPlainObject,
 	BaseView,
 } from '@/utils/utils';
+import { Logger } from '@/utils/logger';
 
 /**
  * Представление списка товаров в корзине.
  */
 export class CartListView extends BaseView {
-	/** Элемент-контейнер, в который рендерится корзина */
 	protected container: HTMLElement;
-
-	/** Шаблон для отдельного элемента корзины */
 	protected itemTemplate: HTMLTemplateElement;
 
-	/** Обработчик удаления товара из корзины */
 	protected removeHandler: (id: string) => void = () => {};
-
-	/** Обработчик оформления заказа */
 	protected checkoutHandler: () => void = () => {};
 
 	/**
-	 * Создаёт экземпляр представления корзины.
-	 * @param container - DOM-элемент, куда будет рендериться корзина
+	 * @param container Элемент, в который будет рендериться корзина.
 	 */
 	constructor(container: HTMLElement) {
 		const template = ensureElement<HTMLTemplateElement>('#basket');
@@ -36,14 +29,14 @@ export class CartListView extends BaseView {
 	}
 
 	/**
-	 * Отображает список товаров в корзине.
-	 * @param items - Список товаров в корзине
-	 * @param total - Общая стоимость товаров
+	 * Отображает список товаров и итоговую сумму.
+	 * @param items Список товаров.
+	 * @param total Общая стоимость.
 	 */
-	render(items: ICartItem[], total: number) {
+	render(items: ICartItem[], total: number): void {
 		this.container.innerHTML = '';
-
 		const basketNode = this.cloneTemplate();
+
 		const list = this.qs<HTMLElement>(basketNode, '.basket__list')!;
 		const totalPrice = this.qs<HTMLElement>(basketNode, '.basket__price')!;
 		const checkoutBtn = this.qs<HTMLButtonElement>(
@@ -64,6 +57,9 @@ export class CartListView extends BaseView {
 			const deleteButton = this.qs(itemNode, '.basket__item-delete');
 			if (deleteButton) {
 				deleteButton.addEventListener('click', () => {
+					Logger.info('Удаление товара из корзины (UI)', {
+						id: item.product.id,
+					});
 					this.removeHandler(item.product.id);
 				});
 			}
@@ -73,33 +69,43 @@ export class CartListView extends BaseView {
 
 		totalPrice.textContent = this.formatPrice(total);
 		checkoutBtn.disabled = items.length === 0;
-		checkoutBtn.addEventListener('click', () => this.checkoutHandler());
+		checkoutBtn.addEventListener('click', () => {
+			Logger.info('Нажатие на кнопку "Оформить заказ"');
+			this.checkoutHandler();
+		});
 
 		this.container.appendChild(basketNode);
+
+		Logger.info('Корзина отрендерена', {
+			count: items.length,
+			total,
+		});
 	}
 
 	/**
-	 * Устанавливает обработчик удаления товара из корзины.
-	 * @param handler - Функция-обработчик, принимающая id товара
+	 * Устанавливает обработчик удаления товара.
+	 * @param handler Функция, вызываемая при удалении товара.
 	 */
-	onRemove(handler: (id: string) => void) {
+	onRemove(handler: (id: string) => void): void {
 		this.removeHandler = handler;
 	}
 
 	/**
 	 * Устанавливает обработчик оформления заказа.
-	 * @param handler - Функция-обработчик оформления заказа
+	 * @param handler Функция, вызываемая при оформлении заказа.
 	 */
-	onCheckout(handler: () => void) {
+	onCheckout(handler: () => void): void {
 		this.checkoutHandler = handler;
 	}
 
 	/**
-	 * Обновляет счётчик количества товаров в корзине в шапке.
-	 * @param count - Количество товаров
+	 * Обновляет счётчик товаров в шапке.
+	 * @param count Количество товаров.
 	 */
-	updateCounter(count: number) {
+	updateCounter(count: number): void {
 		const counter = document.querySelector('.header__basket-counter');
-		if (counter) counter.textContent = String(count);
+		if (counter) {
+			counter.textContent = String(count);
+		}
 	}
 }

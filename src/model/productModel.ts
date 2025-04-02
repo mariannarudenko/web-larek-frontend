@@ -7,12 +7,12 @@ import type { IFullProduct } from '@/types';
 export class Product implements IFullProduct {
 	/**
 	 * Создаёт новый экземпляр продукта.
-	 * @param {string} id - Уникальный идентификатор.
-	 * @param {string} title - Название продукта.
-	 * @param {string} description - Описание продукта.
-	 * @param {number | null} price - Цена продукта.
-	 * @param {string} category - Категория продукта.
-	 * @param {string} image - URL изображения продукта.
+	 * @param id Уникальный идентификатор.
+	 * @param title Название продукта.
+	 * @param description Описание продукта.
+	 * @param price Цена продукта (может быть null).
+	 * @param category Категория продукта.
+	 * @param image URL изображения продукта.
 	 */
 	constructor(
 		public readonly id: string,

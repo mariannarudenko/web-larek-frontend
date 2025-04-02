@@ -5,12 +5,15 @@ import { ModalView } from './modalView';
  */
 export class CartModalView extends ModalView {
 	/**
-	 * Конструктор класса, который инициализирует модальное окно корзины.
+	 * @param cdnUrl URL для ресурсов (например, изображений).
 	 */
 	constructor(cdnUrl: string) {
-		super('order-modal', 'basket', cdnUrl);
+		super('basket', cdnUrl);
 	}
 
+	/**
+	 * Возвращает DOM-элемент с контентом модального окна.
+	 */
 	public getContentElement(): HTMLElement {
 		return this.modalContainer.querySelector('.modal__content')!;
 	}

@@ -1,72 +1,80 @@
-import type { ICartItem, ICompletedOrder } from '@/types';
+import type { ICartItem, ICompletedOrder, IOrderBuilder } from '@/types';
 import { Logger } from '@/utils/logger';
 
 /**
  * Модель заказа.
- * Позволяет поэтапно накапливать данные заказа и собрать полную структуру, готовую к отправке.
+ * Позволяет поэтапно накапливать данные заказа и собрать структуру для отправки.
  */
-export class Order {
-	private items: ICartItem[] = [];
-	private total: number = 0;
+export class Order implements IOrderBuilder {
+	private items: string[] = [];
+	private total = 0;
 	private address?: string;
-	private paymentMethod?: string;
+	private payment?: string;
 	private email?: string;
 	private phone?: string;
 
 	/**
-	 * Устанавливает корзину: товары и итоговую сумму.
-	 * @param items - Список товаров
-	 * @param total - Общая сумма
+	 * Устанавливает содержимое корзины и общую сумму.
+	 * @param items Список товаров.
+	 * @param total Итоговая сумма.
 	 */
-	setCart(items: ICartItem[], total: number) {
-		this.items = items;
+	setCart(items: ICartItem[], total: number): void {
+		this.items = items.map((item) => item.product.id);
 		this.total = total;
+		Logger.info('Корзина установлена в заказ', {
+			items: this.items.length,
+			total,
+		});
 	}
 
 	/**
 	 * Устанавливает адрес доставки.
-	 * @param address - Адрес
+	 * @param address Адрес доставки.
 	 */
-	setAddress(address: string) {
+	setAddress(address: string): void {
 		this.address = address;
+		Logger.info('Адрес доставки установлен');
 	}
 
 	/**
 	 * Устанавливает способ оплаты.
-	 * @param method - Способ оплаты
+	 * @param method Способ оплаты.
 	 */
-	setPaymentMethod(method: string) {
-		this.paymentMethod = method;
+	setPaymentMethod(method: string): void {
+		this.payment = method;
+		Logger.info('Способ оплаты установлен', { method });
 	}
 
 	/**
-	 * Устанавливает контактные данные.
-	 * @param email - Email
-	 * @param phone - Телефон
+	 * Устанавливает контактные данные покупателя.
+	 * @param email Email.
+	 * @param phone Телефон.
 	 */
-	setContacts(email: string, phone: string) {
+	setContacts(email: string, phone: string): void {
 		this.email = email;
 		this.phone = phone;
+		Logger.info('Контактные данные установлены');
 	}
 
 	/**
 	 * Проверяет, собраны ли все обязательные поля для оформления заказа.
-	 * @returns true, если заказ можно оформить.
+	 * @returns true, если заказ готов к отправке.
 	 */
 	isComplete(): boolean {
-		return !!(
+		return Boolean(
 			this.items.length &&
-			this.total > 0 &&
-			this.address &&
-			this.paymentMethod &&
-			this.email &&
-			this.phone
+				this.total > 0 &&
+				this.address &&
+				this.payment &&
+				this.email &&
+				this.phone
 		);
 	}
 
 	/**
-	 * Возвращает собранный заказ. Выбрасывает ошибку, если данных недостаточно.
-	 * @returns Полный заказ
+	 * Возвращает собранный заказ.
+	 * @throws Ошибка, если данные неполны.
+	 * @returns Объект заказа.
 	 */
 	getData(): ICompletedOrder {
 		if (!this.isComplete()) {
@@ -79,21 +87,22 @@ export class Order {
 			items: this.items,
 			total: this.total,
 			address: this.address!,
-			paymentMethod: this.paymentMethod!,
+			payment: this.payment!,
 			email: this.email!,
 			phone: this.phone!,
 		};
 	}
 
 	/**
-	 * Сброс всех данных заказа.
+	 * Сбрасывает все данные заказа.
 	 */
-	reset() {
+	reset(): void {
 		this.items = [];
 		this.total = 0;
 		this.address = undefined;
-		this.paymentMethod = undefined;
+		this.payment = undefined;
 		this.email = undefined;
 		this.phone = undefined;
+		Logger.info('Данные заказа сброшены');
 	}
 }

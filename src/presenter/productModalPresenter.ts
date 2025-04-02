@@ -1,20 +1,30 @@
+import { Cart } from '@/model/cartModel';
 import { ProductModalView } from '@/view/productModalView';
 import { ProductValidation } from './productValidation';
+
 import { IEvents } from '@/components/base/events';
-import { IFullProduct } from '@/types';
 import { Logger } from '@/utils/logger';
+
+import { IFullProduct } from '@/types';
 
 /**
  * Презентер для управления модальным окном продукта.
- * Реагирует на событие `modal:open`, проводит валидацию и отображает данные.
+ * Обрабатывает открытие и синхронизирует состояние кнопки "в корзину".
  */
 export class ProductModalPresenter {
+	private currentProduct?: IFullProduct;
+
 	/**
-	 * Создаёт экземпляр `ProductModalPresenter`.
-	 * @param view - Представление модального окна продукта
-	 * @param events - Интерфейс для работы с глобальными событиями
+	 * Создаёт экземпляр презентера и подписывается на события.
+	 * @param view Представление модального окна.
+	 * @param events Система событий.
+	 * @param cart Модель корзины.
 	 */
-	constructor(private view: ProductModalView, private events: IEvents) {
+	constructor(
+		private view: ProductModalView,
+		private events: IEvents,
+		private cart: Cart
+	) {
 		this.events.on<{ product: IFullProduct & { hasCart: boolean } }>(
 			'modal:open',
 			({ product }) => {
@@ -26,9 +36,30 @@ export class ProductModalPresenter {
 					return;
 				}
 
-				Logger.info('Открытие модального окна через презентер', product);
-				this.view.render(product);
+				this.currentProduct = product;
+				this.view.update(product);
+				this.view.showModal();
+				Logger.info('Открыто модальное окно товара', { id: product.id });
 			}
 		);
+
+		this.events.on('cart:changed', () => {
+			this.updateView();
+		});
+	}
+
+	/**
+	 * Обновляет представление, если продукт открыт в модалке.
+	 */
+	private updateView(): void {
+		if (!this.currentProduct || !this.view.isVisible()) return;
+
+		const hasCart = this.cart.hasItem(this.currentProduct.id);
+		this.view.update({ ...this.currentProduct, hasCart });
+
+		Logger.info('Обновлено состояние кнопки "в корзину" в модалке', {
+			id: this.currentProduct.id,
+			hasCart,
+		});
 	}
 }

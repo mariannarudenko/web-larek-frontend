@@ -1,60 +1,79 @@
-import { ensureElement, BaseView } from '@/utils/utils';
+import { ensureElement, cloneTemplate, BaseView } from '@/utils/utils';
+import { Logger } from '@/utils/logger';
 
+import { RenderableView } from '@/types/modal';
+
+/**
+ * Базовый класс представления модального окна.
+ */
 export class ModalView extends BaseView {
 	/** Контейнер модального окна */
 	protected modalContainer: HTMLElement;
 
+	/** Элемент, в который будет вставляться контент */
+	protected contentElement: HTMLElement;
+
 	/**
-	 * Создаёт модальное окно на основе переданного шаблона или существующего DOM-элемента.
-	 * @param modalId ID корневого контейнера модального окна.
-	 * @param templateId ID HTML-шаблона модального окна.
-	 * @param cdnUrl Базовый URL для ресурсов (если требуется).
+	 * @param templateId ID шаблона модального окна.
+	 * @param cdnUrl Базовый URL для ресурсов (по умолчанию пустой).
 	 */
-	constructor(modalId: string, templateId?: string, cdnUrl = '') {
-		const template = templateId
-			? ensureElement<HTMLTemplateElement>(`#${templateId}`)
-			: document.createElement('template');
+	constructor(templateId: string, cdnUrl = '') {
+		const template = ensureElement<HTMLTemplateElement>(
+			`template#${templateId}`
+		);
 		super(template, cdnUrl);
 
-		const existing = document.getElementById(modalId);
-		if (existing) {
-			this.modalContainer = ensureElement(existing);
-		} else {
-			const clone = this.cloneTemplate();
-			this.modalContainer = document.createElement('div');
-			this.modalContainer.id = modalId;
-			this.modalContainer.classList.add('modal');
-			this.modalContainer.appendChild(clone);
-			document.body.appendChild(this.modalContainer);
-		}
+		this.modalContainer = ensureElement<HTMLElement>('#modal-container');
+
+		this.contentElement = ensureElement<HTMLElement>(
+			'.modal__content',
+			this.modalContainer
+		);
+
+		// Очистка и вставка шаблона
+		this.contentElement.innerHTML = '';
+		const content = cloneTemplate<HTMLElement>(template);
+		this.contentElement.appendChild(content);
 
 		this.setupCloseHandlers();
 	}
 
 	/**
-	 * Отображает модальное окно и проверяет наличие .modal__content внутри шаблона.
+	 * Рендер переданного представления в модальное окно.
+	 * @param view Представление с методом getElement().
 	 */
-	showModal() {
-		const content = this.modalContainer.querySelector('.modal__content');
+	public render(view: RenderableView): void {
+		this.contentElement.innerHTML = '';
+		this.contentElement.appendChild(view.getElement());
+	}
+
+	/**
+	 * Отображает модальное окно.
+	 */
+	public showModal(): void {
 		this.show(this.modalContainer);
 	}
 
-	/** Скрывает модальное окно. */
-	hideModal() {
+	/**
+	 * Скрывает модальное окно.
+	 */
+	public hideModal(): void {
 		this.hide(this.modalContainer);
 	}
 
 	/**
-	 * Настраивает обработчики закрытия модального окна:
+	 * Настраивает обработчики закрытия:
 	 * - по клику на .modal__close
-	 * - по клику на фон вне содержимого
+	 * - по клику на фон
 	 */
-	protected setupCloseHandlers() {
+	protected setupCloseHandlers(): void {
 		const closeBtn = this.modalContainer.querySelector('.modal__close');
 		if (closeBtn instanceof HTMLElement) {
 			this.bindEvents(closeBtn, {
 				click: () => this.hideModal(),
 			});
+		} else {
+			Logger.warn('Кнопка закрытия (.modal__close) не найдена в контейнере.');
 		}
 
 		this.bindEvents(this.modalContainer, {
