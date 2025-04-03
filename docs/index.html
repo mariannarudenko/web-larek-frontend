@@ -1,0 +1,177 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>my-webpack-project</title><meta name="description" content="Documentation for my-webpack-project"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">my-webpack-project</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>my-webpack-project</h1></div><div class="tsd-panel tsd-typography"><h1 id="проектная-работа-веб-ларёк" class="tsd-anchor-link">Проектная работа &quot;Веб-ларёк&quot;<a href="#проектная-работа-веб-ларёк" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1><h2 id="веб-ларёк--это-интернет-магазин-товаров-для-веб-разработчиков-в-нём-можно" class="tsd-anchor-link">&quot;Веб-ларёк&quot; – это интернет-магазин товаров для веб-разработчиков. В нём можно:<a href="#веб-ларёк--это-интернет-магазин-товаров-для-веб-разработчиков-в-нём-можно" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li>Просматривать каталог товаров.</li>
+<li>Добавлять товары в корзину.</li>
+<li>Оформлять заказ.</li>
+</ul>
+<h2 id="стек" class="tsd-anchor-link">Стек:<a href="#стек" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li><strong>Язык:</strong> TypeScript</li>
+<li><strong>Разметка и стили:</strong> HTML, SCSS</li>
+<li><strong>Сборщик:</strong> Webpack</li>
+<li><strong>Управление состоянием:</strong> EventEmitter</li>
+<li><strong>Архитектурный паттерн:</strong> MVP (Model-View-Presenter)</li>
+<li><strong>Документирование:</strong> JSDoc</li>
+</ul>
+<h2 id="структура-проекта" class="tsd-anchor-link">Структура проекта:<a href="#структура-проекта" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li>src/ — все исходные файлы проекта</li>
+<li>src/components/ — переиспользуемые JS-компоненты</li>
+<li>src/components/base/ — базовые абстрактные компоненты (например, BaseView)</li>
+<li>src/model/ — модели данных (работа с API, корзиной, товарами и заказами)</li>
+<li>src/view/ — отображение интерфейса и реакция на действия пользователя</li>
+<li>src/presenter/ — логика связывания моделей и представлений</li>
+<li>src/utils/ — вспомогательные функции, логгер и константы</li>
+<li>src/types/ — типизация (интерфейсы и типы данных)</li>
+<li>src/pages/ — HTML-шаблоны страниц</li>
+<li>src/scss/ — стили проекта</li>
+<li>src/public/ — статические ресурсы (изображения, шрифты и т.п.)</li>
+</ul>
+<h2 id="важные-файлы" class="tsd-anchor-link">Важные файлы:<a href="#важные-файлы" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li>src/pages/index.html — HTML-файл главной страницы</li>
+<li>src/index.ts — точка входа приложения</li>
+<li>src/types/index.ts — центральный файл экспорта типов и моделей</li>
+<li>src/scss/styles.scss — корневой файл стилей</li>
+<li>src/utils/constants.ts — файл с константами</li>
+<li>src/utils/utils.ts — файл с утилитами</li>
+<li>src/view/modalView.ts - базовый класс для представления модального окна</li>
+<li>src/utils/logger.ts - утилита для логирования сообщений с разными уровнями важности</li>
+<li>webpack.config.js — конфигурация сборки проекта</li>
+</ul>
+<h2 id="описание-архитектуры" class="tsd-anchor-link">Описание архитектуры<a href="#описание-архитектуры" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>Проект использует MVP-паттерн для разделения логики и отображения. Архитектура проекта спроектирована с учётом масштабируемости — шаги оформления заказа, представления и модели могут расширяться независимо друг от друга. Каждый класс выполняет строго одну задачу (SRP), а взаимодействия между модулями реализовано через события. Повторяющийся код вынесен в базовые классы и утилиты, отсутствует жесткое связывание между слоями.</p>
+<h3 id="основные-компоненты" class="tsd-anchor-link">Основные компоненты<a href="#основные-компоненты" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li>
+<p><strong>Model (Модели):</strong> управляют данными и логикой обработки (товары, корзина, заказы).</p>
+</li>
+<li>
+<p><strong>View (Представления):</strong> отвечают за отрисовку интерфейса и реагируют на события.</p>
+</li>
+<li>
+<p><strong>Presenter (Контроллеры):</strong> связывают модели и представления, управляют логикой взаимодействий.</p>
+</li>
+<li>
+<p><strong>EventEmitter:</strong> используется для связи между компонентами.</p>
+</li>
+<li>
+<p><strong>API-клиент:</strong> получает данные с сервера и преобразует их в удобный формат.</p>
+</li>
+</ul>
+<h3 id="ключевые-классы" class="tsd-anchor-link">Ключевые классы<a href="#ключевые-классы" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><h4 id="модели-srcmodel" class="tsd-anchor-link">Модели (src/model)<a href="#модели-srcmodel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><code>productModel.ts</code> — данные товара, текущее превью</li>
+<li><code>catalogModel.ts</code> — каталог продуктов, реализует хранение, фильтрацию и доступ к товарам</li>
+<li><code>cartModel.ts</code> — управление корзиной (добавление, удаление, подсчёты)</li>
+<li><code>orderModel.ts</code> — оформление заказа (почта, адрес, оплата)</li>
+<li><code>catalogApi.ts</code> / <code>orderApi.ts</code> — взаимодействие с API</li>
+</ul>
+<h4 id="представления-srcview" class="tsd-anchor-link">Представления (src/view)<a href="#представления-srcview" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><code>catalogView.ts</code> — отображение списка товаров</li>
+<li><code>productView.ts</code> / <code>productModalView.ts</code> — карточки и модалки товаров</li>
+<li><code>cartListView.ts</code> / <code>cartModalView.ts</code> — список и модальное окно корзины</li>
+<li><code>contactsModalView.ts</code> — форма ввода email/телефона</li>
+<li><code>paymentModalView.ts</code> — выбор способа оплаты и адреса</li>
+<li><code>successModalView.ts</code> — окно успешного заказа</li>
+<li><code>modalView.ts</code> — базовый модуль модального окна</li>
+</ul>
+<h4 id="презентеры-srcpresenter" class="tsd-anchor-link">Презентеры (src/presenter)<a href="#презентеры-srcpresenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><code>catalogPresenter.ts</code> — управление каталогом товаров</li>
+<li><code>productModalPresenter.ts</code> — отображение карточки в модалке</li>
+<li><code>cartPresenter.ts</code> — синхронизация корзины</li>
+<li><code>paymentPresenter.ts</code> — управление шагом выбора способа оплаты</li>
+<li><code>contactsPresenter.ts</code> — управление шагом с email/телефоном</li>
+<li><code>orderPresenter.ts</code> — финализация заказа</li>
+<li><code>successPresenter.ts</code> — показ финального окна</li>
+<li><code>productValidation.ts</code> — валидация форм заказа</li>
+</ul>
+<h3 id="валидаторы-и-утилиты" class="tsd-anchor-link">Валидаторы и утилиты<a href="#валидаторы-и-утилиты" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li><code>utils.ts</code> — вспомогательные функции</li>
+<li><code>constants.ts</code> — строковые и числовые константы</li>
+<li><code>logger.ts</code> — логирование</li>
+<li><code>productValidation.ts</code> — проверка данных заказа</li>
+</ul>
+<h4 id="типы-данных-srctypes" class="tsd-anchor-link">Типы данных (src/types)<a href="#типы-данных-srctypes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><code>product.ts</code> — описание товара</li>
+<li><code>cart.ts</code> — структура корзины</li>
+<li><code>order.ts</code> — данные заказа</li>
+<li><code>modal.ts</code> — типы для модальных окон</li>
+<li><code>catalog.ts</code> — данные каталога</li>
+<li><code>index.ts</code> — корневой файл экспорта типов</li>
+</ul>
+<h2 id="документация" class="tsd-anchor-link">Документация<a href="#документация" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li>docs/ - код проекта снабжён JSDoc-комментариями и самодокументируется</li>
+</ul>
+<h2 id="описание-базовых-классов" class="tsd-anchor-link">Описание базовых классов<a href="#описание-базовых-классов" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h4 id="класс-api-componentsbaseapits" class="tsd-anchor-link">Класс Api (components/base/api.ts)<a href="#класс-api-componentsbaseapits" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><h5 id="базовый-класс-для-работы-с-api" class="tsd-anchor-link">Базовый класс для работы с API.<a href="#базовый-класс-для-работы-с-api" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><h5 id="методы" class="tsd-anchor-link">Методы:<a href="#методы" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><ul>
+<li>get(uri: string) — выполняет GET-запрос и возвращает данные в формате JSON.</li>
+<li>post(uri: string, data: object, method?: 'POST' | 'PUT' | 'DELETE') — отправка данных на сервер.</li>
+<li>handleResponse(response) — обрабатывает ответ сервера, включая ошибки.</li>
+</ul>
+<h4 id="класс-eventemitter-componentsbaseeventsts" class="tsd-anchor-link">Класс EventEmitter (components/base/events.ts)<a href="#класс-eventemitter-componentsbaseeventsts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><h5 id="классическая-реализация-брокера-событий-на-основе-паттерна-наблюдатель" class="tsd-anchor-link">Классическая реализация брокера событий на основе паттерна &quot;Наблюдатель&quot;.<a href="#классическая-реализация-брокера-событий-на-основе-паттерна-наблюдатель" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><h5 id="методы-1" class="tsd-anchor-link">Методы:<a href="#методы-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><ul>
+<li>on(event, callback) — подписка на событие.</li>
+<li>off(event, callback) — отписка от события.</li>
+<li>emit(event, data) — вызов события.</li>
+<li>onAll(callback) — подписка на все события.</li>
+<li>offAll() — отписка от всех событий.</li>
+<li>trigger(eventName, context?) — возвращает функцию, которая вызывает событие с переданным контекстом.</li>
+</ul>
+<h4 id="класс-baseview-utilsutilsts---внутри-файла" class="tsd-anchor-link">Класс BaseView (utils/utils.ts - внутри файла)<a href="#класс-baseview-utilsutilsts---внутри-файла" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><h5 id="абстрактный-класс-представлений-содержит-универсальные-методы-работы-с-dom-шаблонами-и-отображением" class="tsd-anchor-link">Абстрактный класс представлений. Содержит универсальные методы работы с DOM, шаблонами и отображением.<a href="#абстрактный-класс-представлений-содержит-универсальные-методы-работы-с-dom-шаблонами-и-отображением" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><h5 id="методы-2" class="tsd-anchor-link">Методы:<a href="#методы-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><ul>
+<li>cloneTemplate() — клонирует шаблон.</li>
+<li>qs(root, selector) — сокращённый метод поиска элементов.</li>
+<li>setImage(img, src, alt) — установка изображения.</li>
+<li>formatPrice(price) — форматирует цену (100 → &quot;100 синапсов&quot;).</li>
+<li>show(element) / hide(element) — показать/скрыть элемент.</li>
+<li>bindEvents(element, events) — универсальный метод подписки на события.</li>
+</ul>
+<h4 id="класс-modalview-viewmodalviewts" class="tsd-anchor-link">Класс ModalView (view/modalView.ts)<a href="#класс-modalview-viewmodalviewts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><h5 id="базовый-класс-для-отображения-модальных-окон-наследуется-от-baseview" class="tsd-anchor-link">Базовый класс для отображения модальных окон. Наследуется от BaseView.<a href="#базовый-класс-для-отображения-модальных-окон-наследуется-от-baseview" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><h5 id="особенности" class="tsd-anchor-link">Особенности:<a href="#особенности" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><ul>
+<li>Принимает ID HTML-шаблона и рендерит его содержимое в контейнер #modal-container.</li>
+<li>Позволяет вставлять произвольные View в модальное окно через render(view).</li>
+<li>Поддерживает автоматическое закрытие по кнопке и фону.</li>
+</ul>
+<h5 id="методы-3" class="tsd-anchor-link">Методы:<a href="#методы-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><ul>
+<li>render(view) — рендер представления в модалку.</li>
+<li>showModal() / hideModal() — показать/скрыть модалку.</li>
+<li>setupCloseHandlers() — вешает обработчики на .modal__close и фон.</li>
+</ul>
+<h2 id="описание-классов-model" class="tsd-anchor-link">Описание классов Model<a href="#описание-классов-model" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h4 id="класс-cart-cartmodelts" class="tsd-anchor-link">Класс Cart (cartModel.ts)<a href="#класс-cart-cartmodelts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><h5 id="модель-корзины-пользователя-позволяет-управлять-товарами-добавлять-удалять-очищать-и-получать-информацию" class="tsd-anchor-link">Модель корзины пользователя. Позволяет управлять товарами: добавлять, удалять, очищать и получать информацию.<a href="#модель-корзины-пользователя-позволяет-управлять-товарами-добавлять-удалять-очищать-и-получать-информацию" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><h5 id="методы-4" class="tsd-anchor-link">Методы:<a href="#методы-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><ul>
+<li>getItems() — получить все товары.</li>
+<li>hasItem(id) — проверить наличие товара.</li>
+<li>addItem(product) — добавить товар.</li>
+<li>removeItem(id) — удалить товар.</li>
+<li>clear() — очистить корзину.</li>
+<li>getTotalCount() — количество товаров.</li>
+<li>getTotalPrice() — общая сумма заказа.</li>
+</ul>
+<h4 id="класс-catalog-catalogmodelts" class="tsd-anchor-link">Класс Catalog (catalogModel.ts)<a href="#класс-catalog-catalogmodelts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><h5 id="каталог-товаров-хранит-фильтрует-и-предоставляет-доступ-к-товарам" class="tsd-anchor-link">Каталог товаров. Хранит, фильтрует и предоставляет доступ к товарам.<a href="#каталог-товаров-хранит-фильтрует-и-предоставляет-доступ-к-товарам" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><h5 id="методы-5" class="tsd-anchor-link">Методы:<a href="#методы-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><ul>
+<li>getProducts() — получить список продуктов.</li>
+<li>setProducts(products) — установить и отфильтровать валидные продукты.</li>
+<li>getProductById(id) — найти продукт по ID.</li>
+<li>getAll() — вернуть весь каталог.</li>
+</ul>
+<h4 id="класс-order-ordermodelts" class="tsd-anchor-link">Класс Order (orderModel.ts)<a href="#класс-order-ordermodelts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><h5 id="модель-оформления-заказа-позволяет-поэтапно-накапливать-данные-и-собрать-финальный-заказ" class="tsd-anchor-link">Модель оформления заказа. Позволяет поэтапно накапливать данные и собрать финальный заказ.<a href="#модель-оформления-заказа-позволяет-поэтапно-накапливать-данные-и-собрать-финальный-заказ" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><h5 id="методы-6" class="tsd-anchor-link">Методы:<a href="#методы-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><ul>
+<li>setCart(items, total) — передать товары и сумму заказа.</li>
+<li>setAddress(address) — установить адрес доставки.</li>
+<li>setPaymentMethod(method) — выбрать способ оплаты.</li>
+<li>setContacts(email, phone) — установить контакты.</li>
+<li>isComplete() — проверить полноту данных.</li>
+<li>getData() — собрать заказ в структуру ICompletedOrder.</li>
+<li>reset() — сбросить заказ.</li>
+</ul>
+<h4 id="класс-product-productmodelts" class="tsd-anchor-link">Класс Product (productModel.ts)<a href="#класс-product-productmodelts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><h5 id="модель-полного-продукта" class="tsd-anchor-link">Модель полного продукта.<a href="#модель-полного-продукта" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><h5 id="конструктор-принимает" class="tsd-anchor-link">Конструктор принимает:<a href="#конструктор-принимает" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h5><ul>
+<li>id — идентификатор</li>
+<li>title — название</li>
+<li>description — описание</li>
+<li>price — цена (может быть null)</li>
+<li>category — категория</li>
+<li>image — ссылка на изображение</li>
+</ul>
+<h2 id="описание-классов-view" class="tsd-anchor-link">Описание классов View<a href="#описание-классов-view" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h2 id="описание-классов-presenter" class="tsd-anchor-link">Описание классов Presenter<a href="#описание-классов-presenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h2 id="установка-и-запуск" class="tsd-anchor-link">Установка и запуск<a href="#установка-и-запуск" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>Для установки и запуска проекта необходимо выполнить команды</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">install</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">start</span>
+</code><button>Copy</button></pre>
+
+<p>или</p>
+<pre><code><span class="hl-0">yarn</span><br/><span class="hl-0">yarn</span><span class="hl-1"> </span><span class="hl-0">start</span>
+</code><button>Copy</button></pre>
+
+<h2 id="сборка" class="tsd-anchor-link">Сборка<a href="#сборка" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">build</span>
+</code><button>Copy</button></pre>
+
+<p>или</p>
+<pre><code><span class="hl-0">yarn</span><span class="hl-1"> </span><span class="hl-0">build</span>
+</code><button>Copy</button></pre>
+
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#проектная-работа-веб-ларёк"><span>Проектная работа &quot;Веб-<wbr/>ларёк&quot;</span></a><ul><li><a href="#веб-ларёк--это-интернет-магазин-товаров-для-веб-разработчиков-в-нём-можно"><span>&quot;Веб-<wbr/>ларёк&quot; – это интернет-<wbr/>магазин товаров для веб-<wbr/>разработчиков. В нём можно:</span></a></li><li><a href="#стек"><span>Стек:</span></a></li><li><a href="#структура-проекта"><span>Структура проекта:</span></a></li><li><a href="#важные-файлы"><span>Важные файлы:</span></a></li><li><a href="#описание-архитектуры"><span>Описание архитектуры</span></a></li><li><ul><li><a href="#основные-компоненты"><span>Основные компоненты</span></a></li><li><a href="#ключевые-классы"><span>Ключевые классы</span></a></li><li><ul><li><a href="#модели-srcmodel"><span>Модели (src/model)</span></a></li><li><a href="#представления-srcview"><span>Представления (src/view)</span></a></li><li><a href="#презентеры-srcpresenter"><span>Презентеры (src/presenter)</span></a></li></ul></li><li><a href="#валидаторы-и-утилиты"><span>Валидаторы и утилиты</span></a></li><li><ul><li><a href="#типы-данных-srctypes"><span>Типы данных (src/types)</span></a></li></ul></li></ul></li><li><a href="#документация"><span>Документация</span></a></li><li><a href="#описание-базовых-классов"><span>Описание базовых классов</span></a></li><li><ul><li><ul><li><a href="#класс-api-componentsbaseapits"><span>Класс <wbr/>Api (components/base/api.ts)</span></a></li><li><ul><li><a href="#базовый-класс-для-работы-с-api"><span>Базовый класс для работы с API.</span></a></li><li><a href="#методы"><span>Методы:</span></a></li></ul></li><li><a href="#класс-eventemitter-componentsbaseeventsts"><span>Класс <wbr/>Event<wbr/>Emitter (components/base/events.ts)</span></a></li><li><ul><li><a href="#классическая-реализация-брокера-событий-на-основе-паттерна-наблюдатель"><span>Классическая реализация брокера событий на основе паттерна &quot;Наблюдатель&quot;.</span></a></li><li><a href="#методы-1"><span>Методы:</span></a></li></ul></li><li><a href="#класс-baseview-utilsutilsts---внутри-файла"><span>Класс <wbr/>Base<wbr/>View (utils/utils.ts -<wbr/> внутри файла)</span></a></li><li><ul><li><a href="#абстрактный-класс-представлений-содержит-универсальные-методы-работы-с-dom-шаблонами-и-отображением"><span>Абстрактный класс представлений. Содержит универсальные методы работы с DOM, шаблонами и отображением.</span></a></li><li><a href="#методы-2"><span>Методы:</span></a></li></ul></li><li><a href="#класс-modalview-viewmodalviewts"><span>Класс <wbr/>Modal<wbr/>View (view/modal<wbr/>View.ts)</span></a></li><li><ul><li><a href="#базовый-класс-для-отображения-модальных-окон-наследуется-от-baseview"><span>Базовый класс для отображения модальных окон. Наследуется от <wbr/>Base<wbr/>View.</span></a></li><li><a href="#особенности"><span>Особенности:</span></a></li><li><a href="#методы-3"><span>Методы:</span></a></li></ul></li></ul></li></ul></li><li><a href="#описание-классов-model"><span>Описание классов <wbr/>Model</span></a></li><li><ul><li><ul><li><a href="#класс-cart-cartmodelts"><span>Класс <wbr/>Cart (cart<wbr/>Model.ts)</span></a></li><li><ul><li><a href="#модель-корзины-пользователя-позволяет-управлять-товарами-добавлять-удалять-очищать-и-получать-информацию"><span>Модель корзины пользователя. Позволяет управлять товарами: добавлять, удалять, очищать и получать информацию.</span></a></li><li><a href="#методы-4"><span>Методы:</span></a></li></ul></li><li><a href="#класс-catalog-catalogmodelts"><span>Класс <wbr/>Catalog (catalog<wbr/>Model.ts)</span></a></li><li><ul><li><a href="#каталог-товаров-хранит-фильтрует-и-предоставляет-доступ-к-товарам"><span>Каталог товаров. Хранит, фильтрует и предоставляет доступ к товарам.</span></a></li><li><a href="#методы-5"><span>Методы:</span></a></li></ul></li><li><a href="#класс-order-ordermodelts"><span>Класс <wbr/>Order (order<wbr/>Model.ts)</span></a></li><li><ul><li><a href="#модель-оформления-заказа-позволяет-поэтапно-накапливать-данные-и-собрать-финальный-заказ"><span>Модель оформления заказа. Позволяет поэтапно накапливать данные и собрать финальный заказ.</span></a></li><li><a href="#методы-6"><span>Методы:</span></a></li></ul></li><li><a href="#класс-product-productmodelts"><span>Класс <wbr/>Product (product<wbr/>Model.ts)</span></a></li><li><ul><li><a href="#модель-полного-продукта"><span>Модель полного продукта.</span></a></li><li><a href="#конструктор-принимает"><span>Конструктор принимает:</span></a></li></ul></li></ul></li></ul></li><li><a href="#описание-классов-view"><span>Описание классов <wbr/>View</span></a></li><li><a href="#описание-классов-presenter"><span>Описание классов <wbr/>Presenter</span></a></li><li><a href="#установка-и-запуск"><span>Установка и запуск</span></a></li><li><a href="#сборка"><span>Сборка</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html">my-webpack-project</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

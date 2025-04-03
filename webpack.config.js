@@ -24,7 +24,7 @@ const config = {
     open: true,
     host: "localhost",
     watchFiles: ["src/pages/*.html"],
-    hot: true
+    hot: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -73,6 +73,9 @@ const config = {
     ],
   },
   resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
     extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
   },
   optimization: {
