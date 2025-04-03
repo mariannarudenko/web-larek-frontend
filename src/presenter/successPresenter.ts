@@ -5,8 +5,6 @@ import { Logger } from '@/utils/logger';
  * Презентер финального шага — успешное оформление заказа.
  */
 export class SuccessPresenter {
-	private isMounted = false;
-
 	/**
 	 * @param view Представление модального окна.
 	 * @param total Итоговая сумма заказа.
@@ -22,9 +20,6 @@ export class SuccessPresenter {
 	 * Инициализирует модальное окно и навешивает обработчик закрытия.
 	 */
 	public init(): void {
-		if (this.isMounted) return;
-		this.isMounted = true;
-
 		this.view.setTotal(this.total);
 		Logger.info('Открыто окно успешного оформления заказа', {
 			total: this.total,

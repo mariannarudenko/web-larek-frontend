@@ -3,7 +3,7 @@ import { API_ENDPOINTS } from '@/utils/constants';
 import { Product } from '@/model/productModel';
 import { Catalog } from '@/model/catalogModel';
 import { IProductCatalog, IFilterableCatalog } from '@/types';
-import { ProductValidation } from '@/presenter/productValidation';
+import { ProductValidation } from '@/utils/productValidation';
 import { Logger } from '@/utils/logger';
 
 /**

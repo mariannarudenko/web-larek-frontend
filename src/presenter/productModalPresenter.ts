@@ -1,6 +1,6 @@
 import { Cart } from '@/model/cartModel';
 import { ProductModalView } from '@/view/productModalView';
-import { ProductValidation } from './productValidation';
+import { ProductValidation } from '../utils/productValidation';
 
 import { IEvents } from '@/components/base/events';
 import { Logger } from '@/utils/logger';

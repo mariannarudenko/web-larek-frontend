@@ -1,5 +1,5 @@
 import { Product } from './productModel';
-import { ProductValidation } from '@/presenter/productValidation';
+import { ProductValidation } from '@/utils/productValidation';
 import type { IProductCatalog, IFilterableCatalog } from '@/types';
 import { Logger } from '@/utils/logger';
 

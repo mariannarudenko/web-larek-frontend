@@ -1,4 +1,4 @@
-import { Api } from '../components/base/api';
+import { Api } from './api';
 import { API_ENDPOINTS } from '@/utils/constants';
 import { ICompletedOrder } from '@/types';
 import { Logger } from '@/utils/logger';

@@ -1,8 +1,8 @@
 import './scss/styles.scss';
 
 import { EventEmitter } from './components/base/events';
-import { CatalogApi } from './model/catalogApi';
-import { OrderApi } from '@/model/orderApi';
+import { CatalogApi } from './components/base/catalogApi';
+import { OrderApi } from '@/components/base/orderApi';
 import { ModalView } from '@/view/modalView';
 
 import { CatalogView } from './view/catalogView';
@@ -38,18 +38,6 @@ const catalogContainer = ensureElement<HTMLElement>(
 );
 
 /**
- * Инициализация представления и модели каталога.
- */
-const catalogView = new CatalogView(catalogContainer, eventBus);
-const catalogModel = new CatalogApi();
-const catalogPresenter = new CatalogPresenter(
-	catalogView,
-	catalogModel,
-	eventBus
-);
-Logger.info('Инициализация каталога завершена');
-
-/**
  * Инициализация корзины.
  */
 const cartModalView = new CartModalView(CDN_URL);
@@ -62,6 +50,19 @@ const cartPresenter = new CartPresenter(
 	eventBus
 );
 Logger.info('Инициализация корзины завершена');
+
+/**
+ * Инициализация представления и модели каталога.
+ */
+const catalogView = new CatalogView(catalogContainer, eventBus);
+const catalogModel = new CatalogApi();
+const catalogPresenter = new CatalogPresenter(
+	catalogView,
+	catalogModel,
+	eventBus,
+	cartModel
+);
+Logger.info('Инициализация каталога завершена');
 
 /**
  * Инициализация представления модального окна карточки товара.

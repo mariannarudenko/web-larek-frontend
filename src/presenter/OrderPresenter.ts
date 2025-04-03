@@ -15,7 +15,7 @@ import { Logger } from '@/utils/logger';
 import type { ICartItem, IOrderSender } from '@/types';
 
 /**
- * Презентер оформления заказа: связывает все шаги (оплата → контакты → успех).
+ * Презентер оформления заказа: связывает шаги оплаты, ввода контактов и подтверждения.
  */
 export class OrderPresenter {
 	private paymentPresenter: PaymentPresenter;
@@ -42,20 +42,22 @@ export class OrderPresenter {
 		this.contactsPresenter = new ContactsPresenter(
 			this.model,
 			this.contactsView,
-			this.onContactsComplete.bind(this)
+			this.onContactsComplete.bind(this),
+			this.events
 		);
 
 		this.setup();
 	}
 
 	/**
-	 * Подписка на событие начала оформления заказа.
+	 * Подписывается на событие начала оформления заказа.
 	 */
-	private setup() {
+	private setup(): void {
 		this.events.on(
 			'order:open',
 			({ items, total }: { items: ICartItem[]; total: number }) => {
 				this.model.setCart(items, total);
+
 				Logger.info('Открыт первый шаг оформления заказа', {
 					total,
 					itemsCount: items.length,
@@ -69,9 +71,9 @@ export class OrderPresenter {
 	}
 
 	/**
-	 * Обрабатывает завершение первого шага (оплата).
+	 * Обрабатывает переход от оплаты к шагу ввода контактов.
 	 */
-	private onPaymentComplete() {
+	private onPaymentComplete(): void {
 		Logger.info('Переход к шагу ввода контактов');
 
 		this.modal.hideModal();
@@ -81,7 +83,7 @@ export class OrderPresenter {
 	}
 
 	/**
-	 * Обрабатывает завершение второго шага (контакты).
+	 * Отправляет заказ после ввода контактных данных.
 	 */
 	private async onContactsComplete({
 		email,
@@ -89,7 +91,7 @@ export class OrderPresenter {
 	}: {
 		email: string;
 		phone: string;
-	}) {
+	}): Promise<void> {
 		try {
 			this.model.setContacts(email, phone);
 			const order = this.model.getData();
@@ -106,9 +108,9 @@ export class OrderPresenter {
 	}
 
 	/**
-	 * Показывает финальное сообщение об успешной покупке.
+	 * Отображает экран успешного оформления заказа.
 	 */
-	private showSuccess(total: number) {
+	private showSuccess(total: number): void {
 		Logger.info('Показ экрана успешного оформления заказа', { total });
 
 		this.successPresenter = new SuccessPresenter(
@@ -116,30 +118,28 @@ export class OrderPresenter {
 			total,
 			this.onSuccessClose.bind(this)
 		);
+
 		this.modal.render(this.successView);
 		this.modal.showModal();
 		this.successPresenter.init();
 	}
 
 	/**
-	 * Завершает оформление и очищает состояние.
+	 * Завершает оформление заказа, очищает состояние и возвращает пользователя к каталогу.
 	 */
-	private onSuccessClose() {
+	private onSuccessClose(): void {
 		Logger.info('Оформление заказа завершено. Сброс данных.');
-	
+
 		this.modal.hideModal();
-	
-		// Получаем товары из корзины и сбрасываем у них флаг hasCart
-		this.cart.getItems().forEach((item) => {
-			item.product.hasCart = false;
-			Logger.info('Сброшен флаг hasCart для товара', { id: item.product.id });
-		});
-	
-		// Сброс состояния модели и корзины
+
 		this.model.reset();
 		this.cart.clear();
-	
-		// Эмитируем события для обновления UI
+
+		this.paymentView.reset();
+		this.contactsView.reset();
+		this.successView.reset();
+
+		this.events.emit('order:reset');
 		this.events.emit('cart:changed', []);
 		this.events.emit('catalog:open');
 	}
