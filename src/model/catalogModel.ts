@@ -1,55 +1,51 @@
-import { Product } from './productModel';
-import { ProductValidation } from '@/utils/productValidation';
-import type { IProductCatalog, IFilterableCatalog } from '@/types';
-import { Logger } from '@/utils/logger';
+import type {
+	IFullProduct,
+	IProductCatalog,
+	IFilterableCatalog,
+} from '@/types';
+import { Logger } from '@/services/logger';
 
 /**
  * Класс каталога продуктов.
- * Реализует хранение, фильтрацию и доступ к товарам.
+ * Реализует хранение и поиск продуктов.
  */
 export class Catalog implements IProductCatalog, IFilterableCatalog {
-	private products: Product[] = [];
+	private products: IFullProduct[] = [];
 
 	/**
-	 * Возвращает список всех продуктов.
-	 * @returns Промис с массивом продуктов.
+	 * Возвращает все продукты из каталога.
+	 * @returns {IFullProduct[]} Массив продуктов
 	 */
-	async getProducts(): Promise<Product[]> {
+	getProducts(): IFullProduct[] {
 		return this.products;
 	}
 
 	/**
-	 * Устанавливает список продуктов после валидации.
-	 * @param products Массив продуктов.
+	 * Заменяет текущие продукты новыми.
+	 * @param {IFullProduct[]} products - Новый массив продуктов
 	 */
-	setProducts(products: Product[]): void {
-		this.products = products.filter(ProductValidation.validate);
+	setProducts(products: IFullProduct[]): void {
+		this.products = products;
+
 		Logger.info('Каталог обновлён', {
 			total: products.length,
-			valid: this.products.length,
 		});
 	}
 
 	/**
-	 * Возвращает продукт по его ID.
-	 * @param id Идентификатор продукта.
-	 * @returns Найденный продукт или undefined.
+	 * Ищет продукт по его ID.
+	 * @param {string} id - Идентификатор продукта
+	 * @returns {IFullProduct | undefined} Найденный продукт или undefined
 	 */
-	getProductById(id: string): Product | undefined {
+	getProductById(id: string): IFullProduct | undefined {
 		const product = this.products.find((product) => product.id === id);
+
 		if (product) {
 			Logger.info('Продукт найден в каталоге', product);
 		} else {
 			Logger.warn('Продукт не найден в каталоге', { id });
 		}
-		return product;
-	}
 
-	/**
-	 * Возвращает все продукты из каталога.
-	 * @returns Массив продуктов.
-	 */
-	getAll(): Product[] {
-		return this.products;
+		return product;
 	}
 }

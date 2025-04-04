@@ -1,15 +1,19 @@
-import { ensureElement, BaseView } from '@/utils/utils';
+import { ensureElement } from '@/utils/utils';
+import { BaseView } from '../base/baseView';
 
 /**
  * Представление модального окна выбора способа оплаты и адреса.
- * Отвечает только за отображение и доступ к элементам формы.
+ * Отвечает за отображение и доступ к DOM-элементам формы.
  */
-export class PaymentModalView extends BaseView {
+export class PaymentView extends BaseView {
 	private element?: HTMLElement;
 	private paymentButtons: HTMLButtonElement[] = [];
 	private addressInput!: HTMLInputElement;
 	private submitButton!: HTMLButtonElement;
 
+	/**
+	 * @param {string} [templateId='order'] - ID шаблона формы заказа
+	 */
 	constructor(templateId = 'order') {
 		const template = ensureElement<HTMLTemplateElement>(
 			`template#${templateId}`
@@ -18,7 +22,8 @@ export class PaymentModalView extends BaseView {
 	}
 
 	/**
-	 * Возвращает корневой элемент, пересоздавая его при необходимости.
+	 * Возвращает корневой DOM-элемент формы. Создаёт при первом обращении.
+	 * @returns {HTMLElement} DOM-элемент формы
 	 */
 	public getElement(): HTMLElement {
 		if (!this.element) {
@@ -45,14 +50,16 @@ export class PaymentModalView extends BaseView {
 	}
 
 	/**
-	 * Сбрасывает DOM — шаблон будет пересоздан при следующем рендере.
+	 * Сбрасывает DOM-элемент формы.
+	 * При следующем вызове `getElement` будет создан новый экземпляр.
 	 */
 	public reset(): void {
 		this.element = undefined;
 	}
 
 	/**
-	 * Явно очищает значения полей и кнопок, не пересоздавая DOM.
+	 * Очищает значение адреса и сбрасывает выбор способа оплаты.
+	 * Не пересоздаёт DOM.
 	 */
 	public resetFields(): void {
 		this.addressInput.value = '';
@@ -62,18 +69,34 @@ export class PaymentModalView extends BaseView {
 		this.setNextButtonEnabled(false);
 	}
 
+	/**
+	 * Возвращает список кнопок выбора способа оплаты.
+	 * @returns {HTMLButtonElement[]} Кнопки оплаты
+	 */
 	public getPaymentButtons(): HTMLButtonElement[] {
 		return this.paymentButtons;
 	}
 
+	/**
+	 * Возвращает поле ввода адреса.
+	 * @returns {HTMLInputElement} Поле адреса
+	 */
 	public getAddressInput(): HTMLInputElement {
 		return this.addressInput;
 	}
 
+	/**
+	 * Возвращает кнопку перехода к следующему шагу.
+	 * @returns {HTMLButtonElement} Кнопка "Далее"
+	 */
 	public getNextButton(): HTMLButtonElement {
 		return this.submitButton;
 	}
 
+	/**
+	 * Возвращает имя выбранного способа оплаты.
+	 * @returns {string | null} Название метода или null, если не выбран
+	 */
 	public getSelectedPaymentMethod(): string | null {
 		const selected = this.paymentButtons.find((b) =>
 			b.classList.contains('button_alt-active')
@@ -81,6 +104,10 @@ export class PaymentModalView extends BaseView {
 		return selected?.name || null;
 	}
 
+	/**
+	 * Включает или отключает кнопку перехода к следующему шагу.
+	 * @param {boolean} enabled - true для включения, false для отключения
+	 */
 	public setNextButtonEnabled(enabled: boolean): void {
 		this.submitButton.disabled = !enabled;
 	}

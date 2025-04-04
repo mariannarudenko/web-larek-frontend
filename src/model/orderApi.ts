@@ -1,7 +1,7 @@
-import { Api } from './api';
+import { Api } from '../components/base/api';
 import { API_ENDPOINTS } from '@/utils/constants';
 import { ICompletedOrder } from '@/types';
-import { Logger } from '@/utils/logger';
+import { Logger } from '@/services/logger';
 
 /**
  * Класс для отправки заказа на сервер.
@@ -11,9 +11,9 @@ export class OrderApi {
 
 	/**
 	 * Отправляет заказ на сервер.
-	 * @param order Объект завершённого заказа.
-	 * @returns Промис с ответом от сервера.
-	 * @throws Если произошла ошибка при отправке.
+	 * @param {ICompletedOrder} order - Объект завершённого заказа
+	 * @returns {Promise<object>} Промис с ответом от сервера
+	 * @throws {unknown} Если произошла ошибка при отправке
 	 */
 	async sendOrder(order: ICompletedOrder): Promise<object> {
 		if (!order || Object.keys(order).length === 0) {

@@ -1,15 +1,18 @@
-import { ensureElement, BaseView } from '@/utils/utils';
-import { Logger } from '@/utils/logger';
+import { ensureElement } from '@/utils/utils';
+import { BaseView } from '../base/baseView';
 
 /**
  * Представление модального окна успешного оформления заказа.
  * Отвечает за отображение итоговой суммы и доступ к кнопке закрытия.
  */
-export class SuccessModalView extends BaseView {
+export class SuccessView extends BaseView {
 	private element?: HTMLElement;
 	private totalElement!: HTMLElement;
 	private closeButton!: HTMLButtonElement;
 
+	/**
+	 * @param {string} [templateId='success'] - ID шаблона модального окна
+	 */
 	constructor(templateId = 'success') {
 		const template = ensureElement<HTMLTemplateElement>(
 			`template#${templateId}`
@@ -18,7 +21,8 @@ export class SuccessModalView extends BaseView {
 	}
 
 	/**
-	 * Возвращает элемент модального окна, пересоздавая при необходимости.
+	 * Возвращает DOM-элемент окна. Создаёт при первом вызове.
+	 * @returns {HTMLElement} Элемент окна успешного оформления
 	 */
 	public getElement(): HTMLElement {
 		if (!this.element) {
@@ -36,22 +40,28 @@ export class SuccessModalView extends BaseView {
 	}
 
 	/**
-	 * Сброс DOM — пересоздание произойдёт при следующем getElement().
+	 * Сбрасывает DOM-состояние окна.
+	 * При следующем `getElement()` будет создан новый экземпляр.
 	 */
 	public reset(): void {
 		this.element = undefined;
 	}
 
+	/**
+	 * Возвращает кнопку закрытия окна.
+	 * @returns {HTMLButtonElement} Кнопка закрытия
+	 */
 	public getCloseButton(): HTMLButtonElement {
 		return this.closeButton;
 	}
 
+	/**
+	 * Устанавливает отображаемую сумму списания.
+	 * @param {number} total - Сумма списания в синапсах
+	 */
 	public setTotal(total: number): void {
 		this.totalElement.textContent = `Списано ${total.toLocaleString(
 			'ru-RU'
 		)} синапсов`;
-		Logger.info('Итоговая сумма успешно установлена в модальное окно', {
-			total,
-		});
 	}
 }

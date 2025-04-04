@@ -1,15 +1,18 @@
 import { ICatalogProduct } from '@/types';
-import { IEvents } from '@/components/base/events';
 import { CDN_URL } from '@/utils/constants';
-import { BaseView } from '@/utils/utils';
-import { Logger } from '@/utils/logger';
+import { BaseView } from '../base/baseView';
+import { Logger } from '@/services/logger';
 
 /**
  * Представление каталога товаров.
  * Отвечает за отображение карточек товаров в DOM.
  */
 export class CatalogView extends BaseView {
-	constructor(private container: HTMLElement, private events: IEvents) {
+	/**
+	 * @param {HTMLElement} container - DOM-элемент, в который будут вставляться карточки товаров
+	 * @throws {Error} Если шаблон карточки не найден
+	 */
+	constructor(private container: HTMLElement) {
 		const template =
 			document.querySelector<HTMLTemplateElement>('#card-catalog');
 		if (!template) throw new Error('Шаблон #card-catalog не найден');
@@ -24,9 +27,9 @@ export class CatalogView extends BaseView {
 	}
 
 	/**
-	 * Создаёт DOM-элемент карточки товара.
-	 * @param product Товар каталога.
-	 * @returns DOM-элемент карточки.
+	 * Создаёт DOM-элемент карточки товара на основе шаблона.
+	 * @param {ICatalogProduct} product - Товар каталога
+	 * @returns {HTMLElement} DOM-элемент карточки
 	 */
 	private createCard(product: ICatalogProduct): HTMLElement {
 		const card = this.cloneTemplate();
@@ -58,18 +61,14 @@ export class CatalogView extends BaseView {
 		const clickable = this.qs(card, '.card');
 		if (clickable) {
 			clickable.setAttribute('data-id', product.id);
-			clickable.addEventListener('click', () => {
-				Logger.info('Выбрана карточка товара', { id: product.id });
-				this.events.emit('product:select', { id: product.id });
-			});
 		}
 
 		return card;
 	}
 
 	/**
-	 * Отображает список товаров в контейнере.
-	 * @param products Массив товаров.
+	 * Отображает список товаров в DOM-контейнере каталога.
+	 * @param {ICatalogProduct[]} products - Массив товаров для отображения
 	 */
 	public render(products: ICatalogProduct[]): void {
 		this.clear();

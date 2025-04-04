@@ -1,5 +1,5 @@
-import type { ICartItem, ICompletedOrder, IOrderBuilder } from '@/types';
-import { Logger } from '@/utils/logger';
+import type { IBaseProduct, ICompletedOrder, IOrderBuilder } from '@/types';
+import { Logger } from '@/services/logger';
 
 /**
  * Модель заказа.
@@ -15,11 +15,11 @@ export class Order implements IOrderBuilder {
 
 	/**
 	 * Устанавливает содержимое корзины и общую сумму.
-	 * @param items Список товаров.
-	 * @param total Итоговая сумма.
+	 * @param {IBaseProduct[]} products - Список товаров
+	 * @param {number} total - Итоговая сумма заказа
 	 */
-	setCart(items: ICartItem[], total: number): void {
-		this.items = items.map((item) => item.product.id);
+	setCart(products: IBaseProduct[], total: number): void {
+		this.items = products.map((p) => p.id);
 		this.total = total;
 		Logger.info('Корзина установлена в заказ', {
 			items: this.items.length,
@@ -29,16 +29,16 @@ export class Order implements IOrderBuilder {
 
 	/**
 	 * Устанавливает адрес доставки.
-	 * @param address Адрес доставки.
+	 * @param {string} address - Адрес доставки
 	 */
 	setAddress(address: string): void {
 		this.address = address;
-		Logger.info('Адрес доставки установлен');
+		Logger.info('Адрес доставки установлен', { address });
 	}
 
 	/**
 	 * Устанавливает способ оплаты.
-	 * @param method Способ оплаты.
+	 * @param {string} method - Способ оплаты
 	 */
 	setPaymentMethod(method: string): void {
 		this.payment = method;
@@ -47,8 +47,8 @@ export class Order implements IOrderBuilder {
 
 	/**
 	 * Устанавливает контактные данные покупателя.
-	 * @param email Email.
-	 * @param phone Телефон.
+	 * @param {string} email - Email покупателя
+	 * @param {string} phone - Телефон покупателя
 	 */
 	setContacts(email: string, phone: string): void {
 		this.email = email;
@@ -58,7 +58,7 @@ export class Order implements IOrderBuilder {
 
 	/**
 	 * Проверяет, собраны ли все обязательные поля для оформления заказа.
-	 * @returns true, если заказ готов к отправке.
+	 * @returns {boolean} true, если заказ готов к отправке
 	 */
 	isComplete(): boolean {
 		return Boolean(
@@ -73,8 +73,8 @@ export class Order implements IOrderBuilder {
 
 	/**
 	 * Возвращает собранный заказ.
-	 * @throws Ошибка, если данные неполны.
-	 * @returns Объект заказа.
+	 * @throws {Error} Если данные заказа не полны
+	 * @returns {ICompletedOrder} Объект завершённого заказа
 	 */
 	getData(): ICompletedOrder {
 		if (!this.isComplete()) {

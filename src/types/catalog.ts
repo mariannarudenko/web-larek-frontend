@@ -1,4 +1,4 @@
-import { Product } from '../model/productModel';
+import { IFullProduct } from './product';
 
 /**
  * Интерфейс каталога продуктов.
@@ -7,9 +7,9 @@ import { Product } from '../model/productModel';
 export interface IProductCatalog {
 	/**
 	 * Возвращает список продуктов.
-	 * @returns {Promise<Product[]>} Промис с массивом продуктов.
+	 * @returns {IFullProduct[] | Promise<IFullProduct[]>} Массив продуктов или промис, возвращающий массив продуктов
 	 */
-	getProducts(): Promise<Product[]>;
+	getProducts(): IFullProduct[] | Promise<IFullProduct[]>;
 }
 
 /**
@@ -19,8 +19,8 @@ export interface IProductCatalog {
 export interface IFilterableCatalog {
 	/**
 	 * Возвращает продукт по его идентификатору.
-	 * @param {string} id - Идентификатор продукта.
-	 * @returns {Product | undefined} Найденный продукт или undefined, если не найден.
+	 * @param {string} id - Идентификатор продукта
+	 * @returns {IFullProduct | undefined} Найденный продукт или undefined, если не найден
 	 */
-	getProductById(id: string): Product | undefined;
+	getProductById(id: string): IFullProduct | undefined;
 }

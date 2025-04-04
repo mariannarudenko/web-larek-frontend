@@ -1,5 +1,5 @@
 import type { IBaseProduct, ICartItem } from '@/types';
-import { Logger } from '@/utils/logger';
+import { Logger } from '@/services/logger';
 
 /**
  * Класс, представляющий корзину покупателя.
@@ -10,7 +10,7 @@ export class Cart {
 
 	/**
 	 * Возвращает все товары в корзине.
-	 * @returns Массив элементов корзины.
+	 * @returns {ICartItem[]} Массив товаров в корзине
 	 */
 	getItems(): ICartItem[] {
 		return this.items;
@@ -18,8 +18,8 @@ export class Cart {
 
 	/**
 	 * Проверяет наличие товара в корзине по его ID.
-	 * @param id ID товара.
-	 * @returns true, если товар есть в корзине.
+	 * @param {string} id - Идентификатор товара
+	 * @returns {boolean} true, если товар найден
 	 */
 	hasItem(id: string): boolean {
 		return this.items.some((item) => item.product.id === id);
@@ -27,7 +27,7 @@ export class Cart {
 
 	/**
 	 * Добавляет товар в корзину, если его там ещё нет.
-	 * @param product Товар для добавления.
+	 * @param {IBaseProduct} product - Товар для добавления
 	 */
 	addItem(product: IBaseProduct): void {
 		if (!this.hasItem(product.id)) {
@@ -43,7 +43,7 @@ export class Cart {
 
 	/**
 	 * Удаляет товар из корзины по его ID.
-	 * @param id ID товара для удаления.
+	 * @param {string} id - Идентификатор товара
 	 */
 	removeItem(id: string): void {
 		const initialLength = this.items.length;
@@ -60,17 +60,13 @@ export class Cart {
 	 * Очищает корзину.
 	 */
 	clear(): void {
-		if (this.items.length === 0) {
-			Logger.warn('Попытка очистить уже пустую корзину');
-		} else {
-			this.items = [];
-			Logger.info('Корзина очищена');
-		}
+		this.items = [];
+		Logger.info('Корзина очищена');
 	}
 
 	/**
 	 * Возвращает общее количество товаров в корзине.
-	 * @returns Количество товаров.
+	 * @returns {number} Количество товаров
 	 */
 	getTotalCount(): number {
 		return this.items.length;
@@ -78,7 +74,7 @@ export class Cart {
 
 	/**
 	 * Возвращает общую сумму всех товаров в корзине.
-	 * @returns Итоговая сумма.
+	 * @returns {number} Общая стоимость товаров
 	 */
 	getTotalPrice(): number {
 		return this.items.reduce((sum, item) => sum + (item.product.price ?? 0), 0);
