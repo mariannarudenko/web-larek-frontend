@@ -9,8 +9,8 @@ import { Logger } from '@/services/logger';
  */
 export class CatalogView extends BaseView {
 	/**
-	 * @param {HTMLElement} container - DOM-элемент, в который будут вставляться карточки товаров
-	 * @throws {Error} Если шаблон карточки не найден
+	 * @param container DOM-элемент, в который будут вставляться карточки товаров.
+	 * @throws Ошибка, если шаблон карточки не найден.
 	 */
 	constructor(private container: HTMLElement) {
 		const template =
@@ -28,8 +28,8 @@ export class CatalogView extends BaseView {
 
 	/**
 	 * Создаёт DOM-элемент карточки товара на основе шаблона.
-	 * @param {ICatalogProduct} product - Товар каталога
-	 * @returns {HTMLElement} DOM-элемент карточки
+	 * @param product Товар каталога.
+	 * @returns DOM-элемент карточки.
 	 */
 	private createCard(product: ICatalogProduct): HTMLElement {
 		const card = this.cloneTemplate();
@@ -67,8 +67,24 @@ export class CatalogView extends BaseView {
 	}
 
 	/**
+	 * Навешивает обработчики кликов на карточки товаров.
+	 * @param callback Функция, вызываемая при клике по карточке с её id.
+	 */
+	public bindCardClicks(callback: (id: string) => void): void {
+		this.container.querySelectorAll('.card').forEach((el) => {
+			const id = el.getAttribute('data-id');
+			if (id) {
+				el.addEventListener('click', () => {
+					Logger.info('Выбрана карточка товара', { id });
+					callback(id);
+				});
+			}
+		});
+	}
+
+	/**
 	 * Отображает список товаров в DOM-контейнере каталога.
-	 * @param {ICatalogProduct[]} products - Массив товаров для отображения
+	 * @param products Массив товаров для отображения.
 	 */
 	public render(products: ICatalogProduct[]): void {
 		this.clear();

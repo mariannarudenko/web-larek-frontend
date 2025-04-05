@@ -1,134 +1,53 @@
-import type { IBaseProduct } from './product';
-
-/**
- * Черновик заказа.
- * Используется внутри модели на этапе, когда заказ ещё не завершён.
- */
-export interface IOrderDraft {
-	/**
-	 * Идентификаторы товаров в заказе
-	 */
-	items: string[];
-
-	/**
-	 * Общая сумма заказа
-	 */
-	total: number;
-
-	/**
-	 * Адрес доставки (опционально)
-	 */
-	address?: string;
-
-	/**
-	 * Способ оплаты (опционально)
-	 */
-	payment?: string;
-
-	/**
-	 * Email покупателя (опционально)
-	 */
-	email?: string;
-
-	/**
-	 * Телефон покупателя (опционально)
-	 */
-	phone?: string;
-}
-
 /**
  * Завершённый заказ, готовый к отправке.
  * Используется для API и передачи на сервер.
  */
 export interface ICompletedOrder {
-	/**
-	 * Идентификаторы товаров в заказе
-	 */
+	/** Идентификаторы товаров в заказе */
 	items: string[];
 
-	/**
-	 * Общая сумма заказа
-	 */
+	/** Общая сумма заказа */
 	total: number;
 
-	/**
-	 * Адрес доставки
-	 */
+	/** Адрес доставки */
 	address: string;
 
-	/**
-	 * Способ оплаты
-	 */
+	/** Способ оплаты */
 	payment: string;
 
-	/**
-	 * Email покупателя
-	 */
+	/** Электронная почта клиента */
 	email: string;
 
-	/**
-	 * Телефон покупателя
-	 */
+	/** Номер телефона клиента */
 	phone: string;
 }
 
 /**
  * Интерфейс поэтапного сборщика заказа.
+ * Хранит только то, что вводит пользователь вручную.
  */
 export interface IOrderBuilder {
 	/**
-	 * Устанавливает содержимое корзины и общую сумму.
-	 * @param products - Список товаров
-	 * @param total - Общая сумма
+	 * Устанавливает способ оплаты и адрес доставки.
+	 * @param data Объект с полями `payment` и `address`.
 	 */
-	setCart(products: IBaseProduct[], total: number): void;
+	setPayment(data: { payment: string; address: string }): void;
 
 	/**
-	 * Устанавливает адрес доставки.
-	 * @param address - Адрес
-	 */
-	setAddress(address: string): void;
-
-	/**
-	 * Устанавливает способ оплаты.
-	 * @param method - Способ оплаты
-	 */
-	setPaymentMethod(method: string): void;
-
-	/**
-	 * Устанавливает контактные данные.
-	 * @param email - Email
-	 * @param phone - Телефон
+	 * Устанавливает контактные данные пользователя.
+	 * @param email Электронная почта.
+	 * @param phone Телефон.
 	 */
 	setContacts(email: string, phone: string): void;
 
 	/**
-	 * Проверяет, готов ли заказ к отправке.
-	 * @returns true, если заказ заполнен полностью
+	 * Возвращает готовые к отправке данные заказа.
+	 * Исключает список товаров и общую сумму.
 	 */
-	isComplete(): boolean;
+	getData(): Omit<ICompletedOrder, 'items' | 'total'>;
 
 	/**
-	 * Возвращает собранный заказ.
-	 * @returns Завершённый заказ
-	 */
-	getData(): ICompletedOrder;
-
-	/**
-	 * Сбрасывает все данные заказа.
+	 * Сбрасывает все данные сборщика заказа.
 	 */
 	reset(): void;
-}
-
-/**
- * Абстракция отправки заказа.
- * Подходит для любого сервиса, который умеет отправлять заказ.
- */
-export interface IOrderSender {
-	/**
-	 * Отправляет заказ.
-	 * @param order - Завершённый заказ
-	 * @returns Промис с ответом от сервера
-	 */
-	sendOrder(order: ICompletedOrder): Promise<object>;
 }

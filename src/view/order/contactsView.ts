@@ -1,64 +1,92 @@
 import { ensureElement } from '@/utils/utils';
 import { BaseView } from '../base/baseView';
+import { EventEmitter } from '@/components/base/events';
+import { ModalManager } from '../base/modalManager';
+
+interface ContactsViewProps {
+	eventBus: EventEmitter;
+	modalManager: ModalManager;
+	onSubmit?: (data: { email: string; phone: string }) => void;
+}
 
 /**
- * Представление модального окна для ввода email и телефона.
- * Отвечает за доступ к элементам формы и управление состоянием.
+ * Представление формы ввода контактных данных.
+ * Используется для оформления заказа и отображается в модальном окне.
  */
 export class ContactsView extends BaseView {
-	private element?: HTMLElement;
-	private emailInput!: HTMLInputElement;
-	private phoneInput!: HTMLInputElement;
-	private submitButton!: HTMLButtonElement;
+	private element: HTMLElement;
+	private emailInput: HTMLInputElement;
+	private phoneInput: HTMLInputElement;
+	private submitButton: HTMLButtonElement;
+
+	private eventBus: EventEmitter;
+	private modalManager: ModalManager;
+	public onSubmit?: (data: { email: string; phone: string }) => void;
 
 	/**
-	 * @param {string} [templateId='contacts'] - ID шаблона формы контактов
+	 * Создаёт экземпляр ContactsView.
+	 * @param props - Объект с шиной событий, модальным менеджером и необязательной функцией обработки отправки.
+	 * @param templateId - Идентификатор HTML-шаблона (по умолчанию `'contacts'`).
+	 * @throws Ошибка, если шаблон не найден.
 	 */
-	constructor(templateId = 'contacts') {
+	constructor({ eventBus, modalManager, onSubmit }: ContactsViewProps, templateId = 'contacts') {
 		const template = ensureElement<HTMLTemplateElement>(
 			`template#${templateId}`
 		);
 		super(template, '');
+
+		const fragment = this.cloneTemplate();
+		this.element = fragment.firstElementChild as HTMLElement;
+
+		this.eventBus = eventBus;
+		this.modalManager = modalManager;
+		this.onSubmit = onSubmit;
+
+		const form = this.element as HTMLFormElement;
+
+		this.emailInput = ensureElement<HTMLInputElement>(
+			form.querySelector('input[name="email"]') as HTMLInputElement
+		);
+
+		this.phoneInput = ensureElement<HTMLInputElement>(
+			form.querySelector('input[name="phone"]') as HTMLInputElement
+		);
+
+		this.submitButton = ensureElement<HTMLButtonElement>(
+			form.querySelector('button[type="submit"]') as HTMLButtonElement
+		);
+
+		this.setSubmitEnabled(false);
+
+		this.emailInput.addEventListener('input', () => this.checkFormValidity());
+		this.phoneInput.addEventListener('input', () => this.checkFormValidity());
+
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			const data = {
+				email: this.emailInput.value.trim(),
+				phone: this.phoneInput.value.trim(),
+			};
+			this.onSubmit?.(data);
+		});
+
+		this.eventBus.on('order:openContacts', () => {
+			this.resetFields();
+			this.modalManager.setContent(this.getElement());
+			this.modalManager.show();
+		});
 	}
 
 	/**
-	 * Возвращает корневой элемент формы (создаёт при необходимости).
-	 * @returns {HTMLElement} DOM-элемент формы
+	 * Возвращает DOM-элемент формы контактов.
+	 * @returns HTML-элемент формы.
 	 */
 	public getElement(): HTMLElement {
-		if (!this.element) {
-			this.element = this.cloneTemplate();
-
-			const form = ensureElement<HTMLFormElement>(
-				this.element.querySelector('form[name="contacts"]') as HTMLFormElement
-			);
-
-			this.emailInput = ensureElement<HTMLInputElement>(
-				form.querySelector('input[name="email"]') as HTMLInputElement
-			);
-
-			this.phoneInput = ensureElement<HTMLInputElement>(
-				form.querySelector('input[name="phone"]') as HTMLInputElement
-			);
-
-			this.submitButton = ensureElement<HTMLButtonElement>(
-				form.querySelector('button[type="submit"]') as HTMLButtonElement
-			);
-		}
-
 		return this.element;
 	}
 
 	/**
-	 * Сбрасывает кэшированный DOM-элемент формы.
-	 * При следующем вызове getElement() будет создан новый экземпляр.
-	 */
-	public reset(): void {
-		this.element = undefined;
-	}
-
-	/**
-	 * Очищает значения полей ввода и деактивирует кнопку отправки.
+	 * Сбрасывает значения полей и отключает кнопку отправки.
 	 */
 	public resetFields(): void {
 		this.emailInput.value = '';
@@ -67,32 +95,17 @@ export class ContactsView extends BaseView {
 	}
 
 	/**
-	 * Возвращает input-поле email.
-	 * @returns {HTMLInputElement} Поле ввода email
+	 * Проверяет валидность формы и включает/отключает кнопку отправки.
 	 */
-	public getEmailInput(): HTMLInputElement {
-		return this.emailInput;
+	private checkFormValidity(): void {
+		const emailValid = this.emailInput.value.trim().length > 0;
+		const phoneValid = this.phoneInput.value.trim().length > 0;
+		this.setSubmitEnabled(emailValid && phoneValid);
 	}
 
 	/**
-	 * Возвращает input-поле телефона.
-	 * @returns {HTMLInputElement} Поле ввода телефона
-	 */
-	public getPhoneInput(): HTMLInputElement {
-		return this.phoneInput;
-	}
-
-	/**
-	 * Возвращает кнопку отправки формы.
-	 * @returns {HTMLButtonElement} Кнопка отправки
-	 */
-	public getSubmitButton(): HTMLButtonElement {
-		return this.submitButton;
-	}
-
-	/**
-	 * Активирует или деактивирует кнопку отправки формы.
-	 * @param {boolean} enabled - true для активации, false для отключения
+	 * Устанавливает состояние доступности кнопки отправки.
+	 * @param enabled - Флаг доступности (true — доступна, false — отключена).
 	 */
 	public setSubmitEnabled(enabled: boolean): void {
 		this.submitButton.disabled = !enabled;
