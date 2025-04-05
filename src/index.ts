@@ -1,3 +1,7 @@
+/**
+ * Централизованный презентер
+ */
+
 import './scss/styles.scss';
 
 import { ensureElement } from './utils/utils';
