@@ -1,3 +1,4 @@
+import { ensureElement } from '@/utils/utils';
 import { ICatalogProduct } from '@/types';
 import { CDN_URL } from '@/utils/constants';
 import { BaseView } from '../base/baseView';
@@ -8,15 +9,19 @@ import { Logger } from '@/services/logger';
  * Отвечает за отображение карточек товаров в DOM.
  */
 export class CatalogView extends BaseView {
+	private container: HTMLElement;
+	private onCardClickCallback: (id: string) => void = () => {};
+
 	/**
-	 * @param container DOM-элемент, в который будут вставляться карточки товаров.
-	 * @throws Ошибка, если шаблон карточки не найден.
+	 * Создаёт представление каталога.
+	 * Ищет шаблон карточки и контейнер для рендера внутри DOM.
 	 */
-	constructor(private container: HTMLElement) {
-		const template =
-			document.querySelector<HTMLTemplateElement>('#card-catalog');
-		if (!template) throw new Error('Шаблон #card-catalog не найден');
+	constructor() {
+		const template = ensureElement<HTMLTemplateElement>('#card-catalog');
 		super(template, CDN_URL);
+		this.container = ensureElement<HTMLElement>(
+			document.querySelector('.gallery') as HTMLElement
+		);
 	}
 
 	/**
@@ -54,32 +59,18 @@ export class CatalogView extends BaseView {
 
 		this.qs(card, '.card__title')!.textContent = product.title;
 		this.setImage(this.qs(card, '.card__image'), product.image, product.title);
-		this.qs(card, '.card__price')!.textContent = this.formatPrice(
-			product.price
-		);
+		this.qs(card, '.card__price')!.textContent = this.formatPrice(product.price);
 
 		const clickable = this.qs(card, '.card');
 		if (clickable) {
 			clickable.setAttribute('data-id', product.id);
+			clickable.addEventListener('click', () => {
+				Logger.info('Выбрана карточка товара', { id: product.id });
+				this.onCardClickCallback(product.id);
+			});
 		}
 
 		return card;
-	}
-
-	/**
-	 * Навешивает обработчики кликов на карточки товаров.
-	 * @param callback Функция, вызываемая при клике по карточке с её id.
-	 */
-	public bindCardClicks(callback: (id: string) => void): void {
-		this.container.querySelectorAll('.card').forEach((el) => {
-			const id = el.getAttribute('data-id');
-			if (id) {
-				el.addEventListener('click', () => {
-					Logger.info('Выбрана карточка товара', { id });
-					callback(id);
-				});
-			}
-		});
 	}
 
 	/**
@@ -94,5 +85,13 @@ export class CatalogView extends BaseView {
 		});
 
 		Logger.info('Каталог отрендерен', { count: products.length });
+	}
+
+	/**
+	 * Устанавливает обработчик выбора карточки товара.
+	 * @param callback Функция, вызываемая при клике по карточке.
+	 */
+	public onCardSelect(cb: (id: string) => void): void {
+		this.onCardClickCallback = cb;
 	}
 }

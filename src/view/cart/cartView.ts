@@ -1,13 +1,9 @@
-import { BaseView } from '../base/baseView';
+import { BaseView } from '@/view/base/baseView';
 import { ensureElement } from '@/utils/utils';
-import { Logger } from '@/services/logger';
-import { Cart } from '@/model/cartModel';
-import { CartItemView } from './cartItemView';
-import { EventEmitter } from '@/components/base/events';
-import { ModalManager } from '../base/modalManager';
 
 /**
  * Представление корзины.
+ * Отвечает за отображение списка товаров, общей суммы и обработку события оформления заказа.
  */
 export class CartView extends BaseView {
 	private element: HTMLElement;
@@ -15,18 +11,12 @@ export class CartView extends BaseView {
 	private totalEl: HTMLElement;
 	private checkoutBtn: HTMLButtonElement;
 	private itemTemplate: HTMLTemplateElement;
+	private onCheckoutCallback: () => void = () => {};
 
 	/**
-	 * Создает экземпляр CartView.
-	 * @param eventBus - Шина событий для взаимодействия компонентов.
-	 * @param modalManager - Менеджер модальных окон.
-	 * @param cart - Модель корзины.
+	 * Создаёт представление корзины на основе шаблона и инициализирует DOM.
 	 */
-	constructor(
-		private eventBus: EventEmitter,
-		private modalManager: ModalManager,
-		private cart: Cart
-	) {
+	constructor() {
 		const template = ensureElement<HTMLTemplateElement>('#basket');
 		super(template, '');
 
@@ -42,29 +32,24 @@ export class CartView extends BaseView {
 		this.checkoutBtn = ensureElement<HTMLButtonElement>(
 			this.element.querySelector('.basket__button') as HTMLButtonElement
 		);
+
 		this.itemTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 
 		this.checkoutBtn.addEventListener('click', () => {
-			this.eventBus.emit('order:openPayment');
-		});
-
-		this.eventBus.on('cart:open', () => {
-			this.renderCartContents();
-			this.modalManager.setContent(this.render());
-			this.modalManager.show();
+			this.onCheckoutCallback();
 		});
 	}
 
 	/**
-	 * Возвращает шаблон элемента корзины.
-	 * @returns HTML-шаблон элемента корзины.
+	 * Возвращает шаблон элемента товара в корзине.
+	 * @returns HTML-шаблон карточки товара.
 	 */
 	public getItemTemplate(): HTMLTemplateElement {
 		return this.itemTemplate;
 	}
 
 	/**
-	 * Возвращает DOM-элемент представления корзины.
+	 * Возвращает корневой DOM-элемент корзины.
 	 * @returns DOM-элемент корзины.
 	 */
 	public render(): HTMLElement {
@@ -72,8 +57,16 @@ export class CartView extends BaseView {
 	}
 
 	/**
-	 * Устанавливает список элементов в представление корзины.
-	 * @param items - Массив DOM-элементов товаров.
+	 * Очищает данные корзины.
+	 */
+	public clear(): void {
+		this.setItems([]);
+		this.setTotal(0);
+	}
+
+	/**
+	 * Устанавливает элементы товаров в список корзины.
+	 * @param items Массив элементов DOM, представляющих товары.
 	 */
 	public setItems(items: HTMLElement[]): void {
 		this.listEl.innerHTML = '';
@@ -83,8 +76,9 @@ export class CartView extends BaseView {
 	}
 
 	/**
-	 * Устанавливает итоговую сумму в корзине и активирует/деактивирует кнопку оформления.
-	 * @param total - Общая стоимость товаров.
+	 * Устанавливает отображение общей стоимости заказа.
+	 * Также блокирует кнопку оформления, если сумма равна нулю.
+	 * @param total Сумма заказа.
 	 */
 	public setTotal(total: number): void {
 		this.totalEl.textContent = `${total} синапсов`;
@@ -92,42 +86,10 @@ export class CartView extends BaseView {
 	}
 
 	/**
-	 * Отрисовывает содержимое корзины на основе текущей модели.
+	 * Устанавливает обработчик события оформления заказа.
+	 * @param cb Функция, вызываемая при оформлении.
 	 */
-	private renderCartContents(): void {
-		const items = this.cart.getItems();
-		const total = this.cart.getTotalPrice();
-
-		const views = items.map((item, index) => {
-			const view = new CartItemView(this.itemTemplate, item, index, (id) => {
-				Logger.info('Удаление товара из корзины (UI)', { id });
-				this.cart.removeItem(id);
-				this.eventBus.emit('cart:changed');
-			});
-			return view.render();
-		});
-
-		this.setItems(views);
-		this.setTotal(total);
-	}
-
-	/**
-	 * Обновляет представление корзины, перерисовывая содержимое и пересчитывая итог.
-	 */
-	public update(): void {
-		const items = this.cart.getItems();
-		const total = this.cart.getTotalPrice();
-
-		const views = items.map((item, index) => {
-			const view = new CartItemView(this.itemTemplate, item, index, (id) => {
-				Logger.info('Удаление товара из корзины (UI)', { id });
-				this.cart.removeItem(id);
-				this.eventBus.emit('cart:changed');
-			});
-			return view.render();
-		});
-
-		this.setItems(views);
-		this.setTotal(total);
+	public setOnCheckout(cb: () => void): void {
+		this.onCheckoutCallback = cb;
 	}
 }

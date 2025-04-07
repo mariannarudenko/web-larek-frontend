@@ -4,19 +4,24 @@
 
 import './scss/styles.scss';
 
-import { ensureElement } from './utils/utils';
+// Сервисы
 import { Logger } from './services/logger';
 
+// Утилиты и события
 import { EventEmitter } from './components/base/events';
+import { EVENTS } from './utils/constants';
 
+// Модели
 import { Cart } from './model/cartModel';
 import { Order } from './model/orderModel';
 import { CatalogApi } from './model/catalogApi';
 import { OrderApi } from './model/orderApi';
-import { ProductModel } from './model/productModel';
+import { ProductModel } from './model/productsModel';
 
+// Представления
 import { PageView } from './view/page/pageView';
 import { CartView } from './view/cart/cartView';
+import { CartItemView } from './view/cart/cartItemView';
 import { CatalogView } from './view/catalog/catalogView';
 import { ProductView } from './view/catalog/productView';
 import { PaymentView } from './view/order/paymentView';
@@ -24,208 +29,261 @@ import { ContactsView } from './view/order/contactsView';
 import { SuccessView } from './view/order/successView';
 import { ModalManager } from './view/base/modalManager';
 
+// Типы
 import { IBaseProduct } from './types';
 
-/**
- * Глобальная шина событий приложения
- * @type {EventEmitter}
- */
+/* ----------------------------- Инициализация ----------------------------- */
+
+/** @type {EventEmitter} Глобальная шина событий приложения */
 const eventBus = new EventEmitter();
 
-/**
- * Менеджер модальных окон
- * @type {ModalManager}
- */
+/** @type {ModalManager} Менеджер модальных окон */
 const modalManager = new ModalManager();
 
-/**
- * Контейнер для рендера каталога
- * @type {HTMLElement}
- */
-const gallery = ensureElement<HTMLElement>(
-	document.querySelector('.gallery') as HTMLElement
-);
-
-/**
- * Модель корзины
- * @type {Cart}
- */
+/** @type {Cart} Модель корзины */
 const cart = new Cart();
 
-/**
- * Модель заказа
- * @type {Order}
- */
+/** @type {Order} Модель заказа */
 const order = new Order();
 
-/**
- * API для получения каталога товаров
- * @type {CatalogApi}
- */
+/** @type {CatalogApi} API каталога */
 const catalogApi = new CatalogApi();
 
-/**
- * API для отправки заказа
- * @type {OrderApi}
- */
+/** @type {OrderApi} API заказов */
 const orderApi = new OrderApi();
 
-/**
- * Модель товаров каталога
- * @type {ProductModel}
- */
+/** @type {ProductModel} Модель товаров */
 const productModel = new ProductModel();
 
-/**
- * Представление главной страницы
- * @type {PageView}
- */
+/* ---------------------------- Представления ----------------------------- */
+
 const pageView = new PageView();
+const productView = new ProductView();
+const cartView = new CartView();
+const catalogView = new CatalogView();
+const paymentView = new PaymentView();
+const contactsView = new ContactsView();
+const successView = new SuccessView();
+
+/* -------------------------- Обработчики View ---------------------------- */
 
 /**
- * Представление модального окна с карточкой товара
- * @type {ProductView}
+ * Обработка отправки формы контактов
  */
-const productView = new ProductView({
-	eventBus,
-	productModel,
-	modalManager,
-	cart,
+contactsView.setOnSubmit((data) => {
+	order.setContacts(data.email, data.phone);
+	eventBus.emit(EVENTS.ORDER_SUBMIT);
 });
 
 /**
- * Представление корзины
- * @type {CartView}
+ * Обработка переключения статуса товара (в корзине / нет)
  */
-const cartView = new CartView(eventBus, modalManager, cart);
-
-/**
- * Представление каталога товаров
- * @type {CatalogView}
- */
-const catalogView = new CatalogView(gallery);
-
-/**
- * Представление формы оплаты
- * @type {PaymentView}
- */
-const paymentView = new PaymentView({
-	eventBus,
-	modalManager,
-	onNext: (data) => {
-		order.setPayment(data);
-		eventBus.emit('order:openContacts');
-	},
+productView.setOnToggle((id, inCart) => {
+	if (inCart) {
+		const product = productModel.getProductById(id);
+		if (product) {
+			eventBus.emit(EVENTS.CART_ADD, { product });
+		}
+	} else {
+		eventBus.emit(EVENTS.CART_REMOVE, { productId: id });
+	}
 });
 
 /**
- * Представление формы контактов
- * @type {ContactsView}
+ * Обработка перехода к контактам после выбора способа оплаты
  */
-const contactsView = new ContactsView({
-	eventBus,
-	modalManager,
-	onSubmit: (data) => {
-		order.setContacts(data.email, data.phone);
-		eventBus.emit('order:submit');
-	},
+paymentView.setOnNext((data: { payment: string; address: string }) => {
+	order.setPayment(data);
+	eventBus.emit(EVENTS.ORDER_OPEN_CONTACTS);
 });
 
 /**
- * Представление окна успешного оформления заказа
- * @type {SuccessView}
+ * Обработка клика по кнопке "Оформить заказ" в корзине
  */
-const successView = new SuccessView({
-	eventBus,
-	modalManager,
-	onClose: () => modalManager.hide(),
+cartView.setOnCheckout(() => {
+	eventBus.emit(EVENTS.ORDER_OPEN_PAYMENT);
 });
 
 /**
- * Обработка клика по кнопке корзины в шапке
- * Открывает модальное окно с корзиной
+ * Закрытие окна успешного оформления заказа
  */
-pageView.onCartClick = () => {
-	eventBus.emit('cart:open');
-};
+successView.setOnClose(() => {
+	modalManager.hide();
+});
 
 /**
- * Обработчик добавления товара в корзину
- * @event cart:add
- * @param {IBaseProduct} product - Добавляемый товар
+ * Клик по иконке корзины в шапке
  */
-eventBus.on('cart:add', ({ product }: { product: IBaseProduct }) => {
+pageView.setOnCartClick(() => {
+	eventBus.emit(EVENTS.CART_OPEN_CLICK);
+});
+
+
+/* --------------------------- Обработка событий -------------------------- */
+
+/**
+ * Выбор товара в каталоге
+ */
+eventBus.on<{ id: string }>(EVENTS.PRODUCT_SELECT, ({ id }) => {
+	const product = productModel.getProductById(id);
+	if (!product) return;
+
+	const isValid = product.title.trim().length > 0 && (product.price === null || product.price > 0);
+	if (!isValid) {
+		Logger.warn('Невалидный продукт', product);
+		return;
+	}
+
+	productModel.setCurrent(product);
+	const hasCart = cart.hasItem(product.id);
+	const element = productView.render({ ...product, hasCart });
+
+	modalManager.setContent(element);
+	modalManager.show();
+});
+
+/**
+ * Показ модального окна корзины
+ */
+eventBus.on(EVENTS.CART_OPEN_CLICK, () => {
+	eventBus.emit(EVENTS.CART_OPEN);
+});
+
+/**
+ * Отображение корзины
+ */
+eventBus.on(EVENTS.CART_OPEN, () => {
+	renderCartView({ showModal: true });
+	modalManager.show();
+});
+
+/**
+ * Добавление товара в корзину
+ * @param {IBaseProduct} product
+ */
+eventBus.on(EVENTS.CART_ADD, ({ product }: { product: IBaseProduct }) => {
 	cart.addItem(product);
-	eventBus.emit('cart:changed');
+	eventBus.emit(EVENTS.CART_CHANGED);
 	pageView.updateCartCounter(cart.getTotalCount());
 });
 
 /**
- * Обработчик удаления товара из корзины
- * @event cart:remove
- * @param {string} productId - Идентификатор удаляемого товара
+ * Удаление товара из корзины
+ * @param {string} productId
  */
-eventBus.on('cart:remove', ({ productId }: { productId: string }) => {
+eventBus.on(EVENTS.CART_REMOVE, ({ productId }: { productId: string }) => {
 	cart.removeItem(productId);
-	eventBus.emit('cart:changed');
+	eventBus.emit(EVENTS.CART_CHANGED);
 	pageView.updateCartCounter(cart.getTotalCount());
 });
 
 /**
- * Обработчик отправки заказа
- * @event order:submit
+ * Обновление кнопки товара при изменении корзины
  */
-eventBus.on('order:submit', () => {
+eventBus.on(EVENTS.CART_CHANGED, () => {
+	const current = productModel.getCurrent();
+	if (!current || !modalManager.isVisible()) return;
+	productView.updateButton(cart.hasItem(current.id));
+});
+
+/**
+ * Отображение формы оплаты
+ */
+eventBus.on(EVENTS.ORDER_OPEN_PAYMENT, () => {
+	paymentView.resetFields();
+	modalManager.setContent(paymentView.render());
+	modalManager.show();
+});
+
+/**
+ * Отображение формы контактов
+ */
+eventBus.on(EVENTS.ORDER_OPEN_CONTACTS, () => {
+	contactsView.resetFields();
+	modalManager.setContent(contactsView.getElement());
+	modalManager.show();
+});
+
+
+/**
+ * Обработка отправки заказа
+ */
+eventBus.on(EVENTS.ORDER_SUBMIT, async () => {
 	try {
 		const userData = order.getData();
 		const items = cart.getItems().map((item) => item.product.id);
 		const total = cart.getTotalPrice();
 
-		const orderData = {
-			...userData,
-			items,
-			total,
-		};
+		await orderApi.sendOrder({ ...userData, items, total });
 
-		orderApi
-			.sendOrder(orderData)
-			.then(() => {
-				successView.setTotal(total);
-				cart.clear();
-				order.reset();
-				pageView.updateCartCounter(cart.getTotalCount());
-				eventBus.emit('cart:changed');
-				eventBus.emit('order:reset');
-				eventBus.emit('order:success');
-			})
-			.catch((error: unknown) => {
-				Logger.error('Ошибка при оформлении заказа', error);
-			});
-	} catch (err) {
-		Logger.error('Ошибка валидации данных заказа', err);
+		successView.setTotal(total);
+		cart.clear();
+		cartView.clear();
+		order.reset();
+		pageView.updateCartCounter(0);
+
+		eventBus.emit(EVENTS.CART_CHANGED);
+		eventBus.emit(EVENTS.ORDER_RESET);
+		eventBus.emit(EVENTS.ORDER_SUCCESS);
+	} catch (error) {
+		Logger.error('Ошибка при оформлении заказа', error);
 	}
 });
 
 /**
- * Загрузка и отображение каталога товаров при старте приложения
- * @async
+ * Показ окна успешного оформления
  */
+eventBus.on(EVENTS.ORDER_SUCCESS, () => {
+	modalManager.setContent(successView.getElement());
+	modalManager.show();
+});
+
+/* ------------------------- Вспомогательные функции ------------------------ */
+
+/**
+ * Рендер корзины и установка содержимого
+ * @param {{ showModal?: boolean }} options
+ */
+function renderCartView({ showModal = false } = {}): void {
+	const items = cart.getItems();
+	const totalPrice = cart.getTotalPrice();
+
+	const views = items.map((item, i) => {
+		const view = new CartItemView(
+			cartView.getItemTemplate(),
+			item,
+			i,
+			(id) => eventBus.emit(EVENTS.CART_REMOVE, { productId: id })
+		);
+		return view.render();
+	});
+
+	cartView.setItems(views);
+	cartView.setTotal(totalPrice);
+
+	if (showModal) {
+		modalManager.setContent(cartView.render());
+	}
+}
+
+/* ------------------------ Загрузка данных при старте ---------------------- */
+
 (async () => {
 	try {
 		const fetchedProducts = await catalogApi.fetchProducts();
 		productModel.setProducts(fetchedProducts);
 
-		catalogView.render(
-			productModel.getProducts().map((product) => ({
-				...product,
-				hasCart: cart.hasItem(product.id),
-			}))
-		);
+		const productsWithCart = productModel.getProducts().map((product) => ({
+			...product,
+			hasCart: cart.hasItem(product.id),
+		}));
+
+		catalogView.render(productsWithCart);
 
 		Logger.info('Каталог загружен', { count: fetchedProducts.length });
 
-		catalogView.bindCardClicks((id) => {
-			eventBus.emit('product:select', { id });
+		catalogView.onCardSelect((id) => {
+			eventBus.emit(EVENTS.PRODUCT_SELECT, { id });
 		});
 	} catch (error) {
 		Logger.error('Ошибка загрузки каталога', error);

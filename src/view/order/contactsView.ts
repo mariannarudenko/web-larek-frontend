@@ -1,13 +1,5 @@
 import { ensureElement } from '@/utils/utils';
 import { BaseView } from '../base/baseView';
-import { EventEmitter } from '@/components/base/events';
-import { ModalManager } from '../base/modalManager';
-
-interface ContactsViewProps {
-	eventBus: EventEmitter;
-	modalManager: ModalManager;
-	onSubmit?: (data: { email: string; phone: string }) => void;
-}
 
 /**
  * Представление формы ввода контактных данных.
@@ -18,10 +10,8 @@ export class ContactsView extends BaseView {
 	private emailInput: HTMLInputElement;
 	private phoneInput: HTMLInputElement;
 	private submitButton: HTMLButtonElement;
-
-	private eventBus: EventEmitter;
-	private modalManager: ModalManager;
-	public onSubmit?: (data: { email: string; phone: string }) => void;
+	private onSubmitCallback: (data: { email: string; phone: string }) => void =
+		() => {};
 
 	/**
 	 * Создаёт экземпляр ContactsView.
@@ -29,7 +19,7 @@ export class ContactsView extends BaseView {
 	 * @param templateId - Идентификатор HTML-шаблона (по умолчанию `'contacts'`).
 	 * @throws Ошибка, если шаблон не найден.
 	 */
-	constructor({ eventBus, modalManager, onSubmit }: ContactsViewProps, templateId = 'contacts') {
+	constructor(templateId = 'contacts') {
 		const template = ensureElement<HTMLTemplateElement>(
 			`template#${templateId}`
 		);
@@ -37,10 +27,6 @@ export class ContactsView extends BaseView {
 
 		const fragment = this.cloneTemplate();
 		this.element = fragment.firstElementChild as HTMLElement;
-
-		this.eventBus = eventBus;
-		this.modalManager = modalManager;
-		this.onSubmit = onSubmit;
 
 		const form = this.element as HTMLFormElement;
 
@@ -63,17 +49,10 @@ export class ContactsView extends BaseView {
 
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
-			const data = {
+			this.onSubmitCallback({
 				email: this.emailInput.value.trim(),
 				phone: this.phoneInput.value.trim(),
-			};
-			this.onSubmit?.(data);
-		});
-
-		this.eventBus.on('order:openContacts', () => {
-			this.resetFields();
-			this.modalManager.setContent(this.getElement());
-			this.modalManager.show();
+			});
 		});
 	}
 
@@ -109,5 +88,16 @@ export class ContactsView extends BaseView {
 	 */
 	public setSubmitEnabled(enabled: boolean): void {
 		this.submitButton.disabled = !enabled;
+	}
+
+	/**
+	 * Устанавливает колбэк, который вызывается при отправке формы с контактными данными.
+	 *
+	 * @param {{ email: string, phone: string }} data - Введённые email и телефон
+	 */
+	public setOnSubmit(
+		cb: (data: { email: string; phone: string }) => void
+	): void {
+		this.onSubmitCallback = cb;
 	}
 }

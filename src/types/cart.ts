@@ -1,4 +1,4 @@
-import type { IBaseProduct } from './product';
+import type { IBaseProduct } from './products';
 
 /**
  * Интерфейс элемента корзины.

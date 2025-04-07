@@ -39,8 +39,7 @@
 - `src/utils/constants.ts` — константы  
 - `src/utils/utils.ts` — утилиты  
 - `src/view/base/baseView.ts` — базовый класс для представлений  
-- `src/view/base/modalManager.ts` — управление модальными окнами  
-- `src/services/logger.ts` — логирование действий  
+- `src/view/base/modalManager.ts` — управление модальными окнами 
 - `webpack.config.js` — конфигурация Webpack  
 
 ## Архитектурный подход
@@ -66,17 +65,6 @@
 - `clear()` — очищает корзину.
 - `getTotalCount()` — возвращает количество товаров.
 - `getTotalPrice()` — возвращает суммарную цену.
-
-### Класс `Catalog`
-**Назначение:** Хранит список всех товаров и позволяет получать их по ID.
-
-**Поля:**
-- `products` — массив всех загруженных товаров.
-
-**Методы:**
-- `setProducts(products)` — сохраняет список товаров.
-- `getProducts()` — возвращает весь список.
-- `getProductById(id)` — находит товар по ID.
 
 ### Класс `Order`
 **Назначение:** Отвечает за пошаговое накопление данных заказа: адрес, способ оплаты, контакты.
@@ -106,7 +94,7 @@
 
 **Методы:**
 - `render(products)` — отображает карточки.
-- `bindCardClicks(callback)` — обрабатывает клики по товарам.
+- `onCardSelect(callback)` — обрабатывает клики по товарам.
 
 ### Класс `ProductView`
 **Назначение:** Представление одной карточки товара.
@@ -117,7 +105,8 @@
 
 **Методы:**
 - `render(product)` — создаёт и возвращает карточку товара.
-- `updateButton(button, hasCart)` — обновляет текст кнопки в зависимости от статуса товара в корзине.
+- `updateButton(hasCart)` — обновляет текст кнопки в зависимости от статуса товара в корзине.
+- `setOnToggle(callback)` — устанавливает обработчик переключения состояния товара в корзине.
 
 ### Класс `CartView`
 **Назначение:** Представление корзины с товарами.
@@ -130,8 +119,9 @@
 **Методы:**
 - `setItems(items)` — вставляет карточки товаров.
 - `setTotal(total)` — отображает сумму.
-- `render()` — создаёт DOM корзины.
-- `update()` — обновляет данные в корзине.
+- `render()` — возвращает DOM корзины.
+- `clear()` — очищает содержимое корзины.
+- `setOnCheckout(callback)` — устанавливает обработчик оформления заказа.
 
 ### Класс `CartItemView`
 **Назначение:** Отображение одного элемента в корзине.
@@ -153,9 +143,9 @@
 **Методы:**
 - `render()` — возвращает DOM-форму.
 - `resetFields()` — очищает форму.
-- `checkFormValidity()` — проверяет валидность полей.
 - `getSelectedPaymentMethod()` — возвращает выбранный способ оплаты.
 - `setNextButtonEnabled(enabled)` — активирует/деактивирует кнопку.
+- `setOnNext(callback)` — устанавливает обработчик перехода к следующему шагу.
 
 ### Класс `ContactsView`
 **Назначение:** Ввод email и телефона для оформления заказа.
@@ -165,10 +155,10 @@
 - Кнопка отправки заказа.
 
 **Методы:**
-- `getElement()` — создаёт и возвращает DOM-элемент.
+- `getElement()` — возвращает DOM-элемент формы.
 - `resetFields()` — очищает поля.
-- `checkFormValidity()` — проверяет валидность.
-- `setSubmitEnabled(enabled)` — активирует кнопку.
+- `setSubmitEnabled(enabled)` — активирует/деактивирует кнопку отправки.
+- `setOnSubmit(callback)` — устанавливает обработчик отправки формы.
 
 ### Класс `SuccessView`
 **Назначение:** Показывает сообщение об успешном оформлении заказа.
@@ -180,7 +170,7 @@
 **Методы:**
 - `getElement()` — возвращает DOM окна.
 - `setTotal(total)` — показывает списанную сумму.
-- `getCloseButton()` — возвращает кнопку закрытия.
+- `setOnClose(callback)` — устанавливает обработчик закрытия.
 
 ### Класс `ModalManager`
 **Назначение:** Управляет отображением модального окна.
@@ -213,39 +203,44 @@
 
 ### Сценарий: пользователь оформляет заказ
 
-#### 1. View реагирует на действия пользователя
+#### 1. View реагирует на действия пользователя и вызывает колбэк
 **Класс:** `PaymentView`  
-**Событие:** `order:paymentChanged`  
+**Метод:** `setOnNext(callback)`  
 **Действие:** пользователь выбирает способ оплаты и вводит адрес
 
 ```ts
-this.events.emit('order:paymentChanged', { payment, address });
+paymentView.setOnNext((data) => {
+  order.setPayment(data);
+  eventBus.emit(EVENTS.ORDER_OPEN_CONTACTS);
+});
 ```
 
-#### 2. Презентер получает событие и обновляет модель
+#### 2. Презентер обновляет модель
 **Место:** `index.ts`
+
 ```ts
-events.on('order:paymentChanged', ({ payment, address }) => {
-  order.setPayment({ payment, address });
+public setPayment(data: { payment: string; address: string }): void {
+  this.payment = data.payment;
+  this.address = data.address;
+  Logger.info('Данные оплаты установлены', data);
+}
+```
+
+#### 3. Презентер эмитит событие перехода к следующему шагу 
+**Событие:** `EVENTS.ORDER_OPEN_CONTACTS`
+**Описание:** инициирует показ формы с контактными данными
+
+```ts
+eventBus.on(EVENTS.ORDER_OPEN_CONTACTS, () => {
+  contactsView.resetFields();
+  modalManager.setContent(contactsView.getElement());
+  modalManager.show();
 });
 ```
 
-#### 3. Модель обновляется и генерирует новое событие
-**Класс:** `Order`  
-**Метод:** `setPayment`  
-**Событие:** `order:updated`
-
-#### 4. Презентер обрабатывает событие `order:updated`
-```ts
-events.on('order:updated', () => {
-  const isValid = order.isComplete();
-  paymentView.setNextButtonEnabled(isValid);
-});
-```
-
-#### 5. View перерисовывается
-**Класс:** `PaymentView`  
-**Метод:** `setNextButtonEnabled(true)` — активирует кнопку "Далее"
+#### 4. View перерисовывается
+**Класс:** `ContactsView`  
+**Метод:** `resetFields()` — очищает поля перед показом
 
 ---
 

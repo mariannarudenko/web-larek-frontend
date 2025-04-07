@@ -7,11 +7,7 @@ import { ensureElement } from '@/utils/utils';
 export class PageView {
 	private basketButton: HTMLButtonElement;
 	private counter: HTMLElement;
-
-	/**
-	 * Колбэк, вызываемый при клике на кнопку корзины.
-	 */
-	public onCartClick?: () => void;
+	private onCartClickCallback: () => void = () => {};
 
 	/**
 	 * Создаёт представление страницы и инициализирует обработчики.
@@ -26,7 +22,7 @@ export class PageView {
 		);
 
 		this.basketButton.addEventListener('click', () => {
-			this.onCartClick?.();
+			this.onCartClickCallback();
 		});
 	}
 
@@ -36,5 +32,13 @@ export class PageView {
 	 */
 	public updateCartCounter(count: number): void {
 		this.counter.textContent = String(count);
+	}
+
+	/**
+	 * Устанавливает обработчик нажатия на кнопку корзины.
+	 * @param cb Функция-обработчик.
+	 */
+	public setOnCartClick(cb: () => void): void {
+		this.onCartClickCallback = cb;
 	}
 }

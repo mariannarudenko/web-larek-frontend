@@ -1,13 +1,5 @@
 import { ensureElement } from '@/utils/utils';
 import { BaseView } from '../base/baseView';
-import { EventEmitter } from '@/components/base/events';
-import { ModalManager } from '../base/modalManager';
-
-interface PaymentViewProps {
-	eventBus: EventEmitter;
-	modalManager: ModalManager;
-	onNext?: (data: { payment: string; address: string }) => void;
-}
 
 /**
  * Представление формы оплаты и адреса доставки.
@@ -18,9 +10,8 @@ export class PaymentView extends BaseView {
 	private paymentButtons: HTMLButtonElement[];
 	private addressInput: HTMLInputElement;
 	private submitButton: HTMLButtonElement;
-	private eventBus: EventEmitter;
-	private modalManager: ModalManager;
-	public onNext?: (data: { payment: string; address: string }) => void;
+	private onNextCallback: (data: { payment: string; address: string }) => void =
+		() => {};
 
 	/**
 	 * Создает экземпляр PaymentView.
@@ -28,16 +19,14 @@ export class PaymentView extends BaseView {
 	 * @param templateId - Идентификатор HTML-шаблона (по умолчанию `'order'`).
 	 * @throws Ошибка, если шаблон не найден.
 	 */
-	constructor({ eventBus, modalManager, onNext }: PaymentViewProps, templateId = 'order') {
-		const template = ensureElement<HTMLTemplateElement>(`template#${templateId}`);
+	constructor(templateId = 'order') {
+		const template = ensureElement<HTMLTemplateElement>(
+			`template#${templateId}`
+		);
 		super(template, '');
 
 		const fragment = this.cloneTemplate();
 		this.element = fragment.firstElementChild as HTMLElement;
-
-		this.eventBus = eventBus;
-		this.modalManager = modalManager;
-		this.onNext = onNext;
 
 		const form = this.element as HTMLFormElement;
 
@@ -57,7 +46,9 @@ export class PaymentView extends BaseView {
 
 		this.paymentButtons.forEach((button) => {
 			button.addEventListener('click', () => {
-				this.paymentButtons.forEach((b) => b.classList.remove('button_alt-active'));
+				this.paymentButtons.forEach((b) =>
+					b.classList.remove('button_alt-active')
+				);
 				button.classList.add('button_alt-active');
 				this.checkFormValidity();
 			});
@@ -75,13 +66,7 @@ export class PaymentView extends BaseView {
 				address: this.addressInput.value.trim(),
 			};
 
-			this.onNext?.(data);
-		});
-
-		this.eventBus.on('order:openPayment', () => {
-			this.resetFields();
-			this.modalManager.setContent(this.render());
-			this.modalManager.show();
+			this.onNextCallback(data);
 		});
 	}
 
@@ -130,5 +115,14 @@ export class PaymentView extends BaseView {
 	 */
 	public setNextButtonEnabled(enabled: boolean): void {
 		this.submitButton.disabled = !enabled;
+	}
+
+	/**
+	 * Устанавливает callback-функцию, вызываемую при переходе к следующему шагу оформления заказа.
+	 */
+	public setOnNext(
+		cb: (data: { payment: string; address: string }) => void
+	): void {
+		this.onNextCallback = cb;
 	}
 }
