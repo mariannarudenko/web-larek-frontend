@@ -14,10 +14,13 @@ export const EVENTS = {
 	CART_OPEN_CLICK: 'cart:openClick',
 
 	PRODUCT_SELECT: 'product:select',
+	HAS_CART_CHANGED: 'nasItem:changed',
 
 	ORDER_OPEN_PAYMENT: 'order:openPayment',
+	ORDER_PAYMENT_SUBMITTED: 'order:submitedPayment',
 	ORDER_OPEN_CONTACTS: 'order:openContacts',
-	ORDER_SUBMIT: 'order:submit',
+	ORDER_CONTACTS_SUBMITTED: 'order:submitedContacts',
+	ORDER_VALIDATION_ERROR: 'order:error',
 	ORDER_SUCCESS: 'order:success',
 	ORDER_RESET: 'order:reset',
 };

@@ -12,6 +12,10 @@ export class PaymentView extends BaseView {
 	private submitButton: HTMLButtonElement;
 	private onNextCallback: (data: { payment: string; address: string }) => void =
 		() => {};
+	private onInputCallback: (data: {
+		payment: string;
+		address: string;
+	}) => void = () => {};
 
 	/**
 	 * Создает экземпляр PaymentView.
@@ -50,12 +54,19 @@ export class PaymentView extends BaseView {
 					b.classList.remove('button_alt-active')
 				);
 				button.classList.add('button_alt-active');
-				this.checkFormValidity();
+
+				this.onInputCallback({
+					payment: this.getSelectedPaymentMethod() || '',
+					address: this.addressInput.value,
+				});
 			});
 		});
 
 		this.addressInput.addEventListener('input', () => {
-			this.checkFormValidity();
+			this.onInputCallback({
+				payment: this.getSelectedPaymentMethod() || '',
+				address: this.addressInput.value,
+			});
 		});
 
 		form.addEventListener('submit', (event) => {
@@ -88,16 +99,6 @@ export class PaymentView extends BaseView {
 		);
 		this.setNextButtonEnabled(false);
 	}
-
-	/**
-	 * Проверяет корректность заполнения формы и включает/отключает кнопку "Далее".
-	 */
-	private checkFormValidity(): void {
-		const addressFilled = this.addressInput.value.trim().length > 0;
-		const paymentSelected = this.getSelectedPaymentMethod() !== null;
-		this.setNextButtonEnabled(addressFilled && paymentSelected);
-	}
-
 	/**
 	 * Возвращает выбранный способ оплаты.
 	 * @returns Название метода оплаты или `null`, если не выбран.
@@ -124,5 +125,14 @@ export class PaymentView extends BaseView {
 		cb: (data: { payment: string; address: string }) => void
 	): void {
 		this.onNextCallback = cb;
+	}
+
+	/**
+	 * Устанавливает callback, вызываемый при любом вводе (адрес или выбор оплаты)
+	 */
+	public setOnInput(
+		cb: (data: { payment: string; address: string }) => void
+	): void {
+		this.onInputCallback = cb;
 	}
 }

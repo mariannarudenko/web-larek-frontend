@@ -9,7 +9,6 @@ export class SuccessView extends BaseView {
 	private element: HTMLElement;
 	private totalElement: HTMLElement;
 	private closeButton: HTMLButtonElement;
-  private total: number;
 	private onCloseCallback: () => void = () => {};
 
 	/**
@@ -51,7 +50,6 @@ export class SuccessView extends BaseView {
 	 * @param total - Сумма, которая будет отображена в сообщении.
 	 */
 	public setTotal(total: number): void {
-		this.total = total;
 		this.totalElement.textContent = `Списано ${total.toLocaleString('ru-RU')} синапсов`;
 	}
 

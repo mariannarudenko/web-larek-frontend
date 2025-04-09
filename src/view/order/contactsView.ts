@@ -12,6 +12,8 @@ export class ContactsView extends BaseView {
 	private submitButton: HTMLButtonElement;
 	private onSubmitCallback: (data: { email: string; phone: string }) => void =
 		() => {};
+	private onInputCallback: (data: { email: string; phone: string }) => void =
+		() => {};
 
 	/**
 	 * Создаёт экземпляр ContactsView.
@@ -44,8 +46,12 @@ export class ContactsView extends BaseView {
 
 		this.setSubmitEnabled(false);
 
-		this.emailInput.addEventListener('input', () => this.checkFormValidity());
-		this.phoneInput.addEventListener('input', () => this.checkFormValidity());
+		form.addEventListener('input', () => {
+			this.onInputCallback({
+				email: this.emailInput.value,
+				phone: this.phoneInput.value,
+			});
+		});
 
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
@@ -74,15 +80,6 @@ export class ContactsView extends BaseView {
 	}
 
 	/**
-	 * Проверяет валидность формы и включает/отключает кнопку отправки.
-	 */
-	private checkFormValidity(): void {
-		const emailValid = this.emailInput.value.trim().length > 0;
-		const phoneValid = this.phoneInput.value.trim().length > 0;
-		this.setSubmitEnabled(emailValid && phoneValid);
-	}
-
-	/**
 	 * Устанавливает состояние доступности кнопки отправки.
 	 * @param enabled - Флаг доступности (true — доступна, false — отключена).
 	 */
@@ -99,5 +96,16 @@ export class ContactsView extends BaseView {
 		cb: (data: { email: string; phone: string }) => void
 	): void {
 		this.onSubmitCallback = cb;
+	}
+
+	/**
+	 * Устанавливает колбэк, который вызывается при валидных полях.
+	 *
+	 * @param {{ email: string, phone: string }} data - Введённые email и телефон
+	 */
+	public setOnInput(
+		cb: (data: { email: string; phone: string }) => void
+	): void {
+		this.onInputCallback = cb;
 	}
 }

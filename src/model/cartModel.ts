@@ -1,5 +1,7 @@
 import type { IBaseProduct, ICartItem } from '@/types';
 import { Logger } from '@/services/logger';
+import { EVENTS } from '@/utils/constants';
+import type { EventEmitter } from '@/components/base/events';
 
 /**
  * Класс, представляющий корзину покупателя.
@@ -7,7 +9,12 @@ import { Logger } from '@/services/logger';
  */
 export class Cart {
 	private items: ICartItem[] = [];
+	private eventBus?: EventEmitter;
 
+	constructor(eventBus?: EventEmitter) {
+		this.eventBus = eventBus;
+	}
+	
 	/**
 	 * Возвращает все товары в корзине.
 	 * @returns {ICartItem[]} Массив товаров в корзине
@@ -62,6 +69,7 @@ export class Cart {
 	clear(): void {
 		this.items = [];
 		Logger.info('Корзина очищена');
+		this.eventBus?.emit(EVENTS.CART_CHANGED);
 	}
 
 	/**
