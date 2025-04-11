@@ -35,10 +35,9 @@ export interface IOrderBuilder {
 
 	/**
 	 * Устанавливает контактные данные пользователя.
-	 * @param email Электронная почта.
-	 * @param phone Телефон.
+	 * @param data Объект с полями `email` и `phone`.
 	 */
-	setContacts(email: string, phone: string): void;
+	setContacts(data: {email: string, phone: string}): void;
 
 	/**
 	 * Возвращает готовые к отправке данные заказа.

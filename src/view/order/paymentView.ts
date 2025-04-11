@@ -7,6 +7,8 @@ import { BaseView } from '../base/baseView';
  */
 export class PaymentView extends BaseView {
 	private element: HTMLElement;
+	private paymentError: HTMLElement;
+	private addressError: HTMLElement;
 	private paymentButtons: HTMLButtonElement[];
 	private addressInput: HTMLInputElement;
 	private submitButton: HTMLButtonElement;
@@ -33,6 +35,9 @@ export class PaymentView extends BaseView {
 		this.element = fragment.firstElementChild as HTMLElement;
 
 		const form = this.element as HTMLFormElement;
+
+		this.paymentError = ensureElement(form.querySelector('.error-payment') as HTMLElement);
+		this.addressError = ensureElement(form.querySelector('.error-address') as HTMLElement);
 
 		this.paymentButtons = Array.from(
 			form.querySelectorAll<HTMLButtonElement>('.order__buttons .button')
@@ -134,5 +139,18 @@ export class PaymentView extends BaseView {
 		cb: (data: { payment: string; address: string }) => void
 	): void {
 		this.onInputCallback = cb;
+	}
+
+	/**
+	 * Устанавливает ошибки, которые появляются при невалидных полях.
+	 */
+	public updateValidationState(errors: {
+		payment?: string;
+		address?: string;
+		isValid: boolean;
+	}) {
+		this.paymentError.textContent = errors.payment || '';
+		this.addressError.textContent = errors.address || '';
+		this.setNextButtonEnabled(errors.isValid);
 	}
 }

@@ -16,12 +16,14 @@ export class Order implements IOrderBuilder {
 	 * @param data Объект с полями `payment` и `address`.
 	 */
 	public setPayment(data: { payment: string; address: string }): boolean {
-		if (!this.validatePayment(data)) {
+		this.payment = data.payment.trim();
+		this.address = data.address.trim();
+
+		if (!this.validatePayment()) {
 			Logger.warn('Невалидные платёжные данные', data);
 			return false;
 		}
-		this.payment = data.payment.trim();
-		this.address = data.address.trim();
+	
 		Logger.info('Данные оплаты установлены', data);
 		return true;
 	}
@@ -30,14 +32,16 @@ export class Order implements IOrderBuilder {
 	 * Устанавливает контактные данные с валидацией.
 	 * @returns true — если данные валидны и установлены, иначе false.
 	 */
-	public setContacts(email: string, phone: string): boolean {
-		if (!this.validateContacts(email, phone)) {
-			Logger.warn('Невалидные контактные данные', { email, phone });
+	public setContacts(data: { email: string; phone: string }): boolean {
+		this.email = data.email.trim();
+		this.phone = data.phone.trim();
+
+		if (!this.validateContacts()) {
+			Logger.warn('Невалидные контактные данные', data);
 			return false;
 		}
-		this.email = email.trim();
-		this.phone = phone.trim();
-		Logger.info('Контактные данные установлены', { email, phone });
+		
+		Logger.info('Контактные данные установлены', data);
 		return true;
 	}
 
@@ -81,17 +85,18 @@ export class Order implements IOrderBuilder {
 		Logger.info('Данные заказа сброшены');
 	}
 
-	/** 
-	 * Валидирует контактные данные, без изменения модели 
+	/**
+	 * Валидирует контактные данные, без изменения модели
 	 **/
-	public validateContacts(email: string, phone: string): boolean {
-		return Boolean(email.trim() && phone.trim());
+	public validateContacts(): boolean {
+		return Boolean(this.email?.trim() && this.phone?.trim());
 	}
 
-	/** 
-	 * Валидирует платёжные данные, без изменения модели 
-	 **/
-	public validatePayment(data: { payment: string; address: string }): boolean {
-		return Boolean(data.payment.trim() && data.address.trim());
+	/**
+	 * Валидирует платёжные данные, на основе текущего состояния модели.
+	 * @returns true, если данные заполнены корректно.
+	 */
+	public validatePayment(): boolean {
+		return Boolean(this.payment?.trim() && this.address?.trim());
 	}
 }

@@ -71,10 +71,24 @@ const successView = new SuccessView();
  * Реакция на ввод оплаты и адреса.
  * Валидируем данные через модель и активируем кнопку, если они корректны.
  */
-paymentView.setOnInput(({ payment, address }) => {
-	const isValid = order.validatePayment({ payment, address });
-	paymentView.setNextButtonEnabled(isValid);
+paymentView.setOnInput(() => {
+	const payment = paymentView.getSelectedPaymentMethod();
+	const address = paymentView['addressInput']?.value?.trim() || '';
+
+	if (!payment && !address) return;
+
+	order.setPayment({ payment: payment || '', address });
+
+	const isValid = order.validatePayment();
+	const errors = {
+		isValid,
+		payment: !payment ? 'Выберите способ оплаты' : undefined,
+		address: !address ? 'Введите адрес доставки' : undefined,
+	};
+
+	eventBus.emit(EVENTS.ORDER_VALIDATE_PAYMENT, errors);
 });
+
 
 /**
  * Обработка перехода к контактам после выбора способа оплаты
@@ -88,8 +102,22 @@ paymentView.setOnNext((data: { payment: string; address: string }) => {
  * Валидируем данные через модель и активируем кнопку, если они корректны.
  */
 contactsView.setOnInput(({ email, phone }) => {
-	const isValid = order.validateContacts(email, phone);
-	contactsView.setSubmitEnabled(isValid);
+	const trimmedEmail = email?.trim() || '';
+	const trimmedPhone = phone?.trim() || '';
+
+	if (!trimmedEmail && !trimmedPhone) return;
+
+	order.setContacts({ email: trimmedEmail, phone: trimmedPhone });
+
+	const isValid = order.validateContacts();
+
+	const errors = {
+		isValid,
+		email: !trimmedEmail ? 'Введите email' : undefined,
+		phone: !trimmedPhone ? 'Введите телефон' : undefined,
+	};
+
+	eventBus.emit(EVENTS.ORDER_VALIDATE_CONTACTS, errors);
 });
 
 /**
@@ -223,6 +251,16 @@ eventBus.on(EVENTS.ORDER_OPEN_PAYMENT, () => {
 });
 
 /**
+ * Ошибка валидации оплаты и адреса
+ */
+eventBus.on<{ payment?: string; address?: string; isValid: boolean }>(
+	EVENTS.ORDER_VALIDATE_PAYMENT,
+	(errors) => {
+		paymentView.updateValidationState(errors);
+	}
+);
+
+/**
  * Открытие формы контактов
  * Сбрасывает поля и отображает ContactsView в модальном окне
  */
@@ -233,6 +271,16 @@ eventBus.on(EVENTS.ORDER_OPEN_CONTACTS, () => {
 });
 
 /**
+ * Ошибка валидации контактов
+ */
+eventBus.on<{ email?: string; phone?: string; isValid: boolean }>(
+	EVENTS.ORDER_VALIDATE_CONTACTS,
+	(errors) => {
+		contactsView.updateValidationState(errors);
+	}
+);
+
+/**
  * Обработка отправки платёжной информации
  * Валидирует и сохраняет данные в модель заказа
  * В случае успеха — открывает форму ввода контактов
@@ -240,8 +288,8 @@ eventBus.on(EVENTS.ORDER_OPEN_CONTACTS, () => {
  */
 eventBus.on<{ payment: string; address: string }>(
 	EVENTS.ORDER_PAYMENT_SUBMITTED,
-	({ payment, address }) => {
-		if (!order.setPayment({ payment, address })) {
+	() => {
+		if (!order.validatePayment()) {
 			eventBus.emit(EVENTS.ORDER_VALIDATION_ERROR, { field: 'payment' });
 			return;
 		}
@@ -257,8 +305,8 @@ eventBus.on<{ payment: string; address: string }>(
  */
 eventBus.on<{ email: string; phone: string }>(
 	EVENTS.ORDER_CONTACTS_SUBMITTED,
-	async ({ email, phone }) => {
-		if (!order.setContacts(email, phone)) {
+	async () => {
+		if (!order.validateContacts()) {
 			eventBus.emit(EVENTS.ORDER_VALIDATION_ERROR, { field: 'contacts' });
 			return;
 		}

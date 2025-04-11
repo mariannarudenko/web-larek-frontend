@@ -7,6 +7,8 @@ import { BaseView } from '../base/baseView';
  */
 export class ContactsView extends BaseView {
 	private element: HTMLElement;
+	private emailError: HTMLElement;
+	private phoneError: HTMLElement;
 	private emailInput: HTMLInputElement;
 	private phoneInput: HTMLInputElement;
 	private submitButton: HTMLButtonElement;
@@ -32,6 +34,9 @@ export class ContactsView extends BaseView {
 
 		const form = this.element as HTMLFormElement;
 
+		this.emailError = ensureElement(form.querySelector('.error-email') as HTMLElement);
+		this.phoneError = ensureElement(form.querySelector('.error-phone') as HTMLElement);
+
 		this.emailInput = ensureElement<HTMLInputElement>(
 			form.querySelector('input[name="email"]') as HTMLInputElement
 		);
@@ -48,8 +53,8 @@ export class ContactsView extends BaseView {
 
 		form.addEventListener('input', () => {
 			this.onInputCallback({
-				email: this.emailInput.value,
-				phone: this.phoneInput.value,
+				email: this.emailInput.value.trim(),
+				phone: this.phoneInput.value.trim(),
 			});
 		});
 
@@ -107,5 +112,18 @@ export class ContactsView extends BaseView {
 		cb: (data: { email: string; phone: string }) => void
 	): void {
 		this.onInputCallback = cb;
+	}
+
+	/**
+	 * Устанавливает ошибки, которые появляются при невалидных полях.
+	 */
+	public updateValidationState(errors: {
+		email?: string;
+		phone?: string;
+		isValid: boolean;
+	}) {
+		this.emailError.textContent = errors.email || '';
+		this.phoneError.textContent = errors.phone || '';
+		this.setSubmitEnabled(errors.isValid);
 	}
 }

@@ -20,6 +20,8 @@ export const EVENTS = {
 	ORDER_PAYMENT_SUBMITTED: 'order:submitedPayment',
 	ORDER_OPEN_CONTACTS: 'order:openContacts',
 	ORDER_CONTACTS_SUBMITTED: 'order:submitedContacts',
+	ORDER_VALIDATE_CONTACTS: 'order:validateContacts',
+	ORDER_VALIDATE_PAYMENT: 'order:validatePayment',
 	ORDER_VALIDATION_ERROR: 'order:error',
 	ORDER_SUCCESS: 'order:success',
 	ORDER_RESET: 'order:reset',
